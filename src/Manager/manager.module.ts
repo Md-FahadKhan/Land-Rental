@@ -1,9 +1,11 @@
 import { Module } from '@nestjs/common';
-import { ManagerContorller } from './controllers/manager.controller';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { ManagerController } from './controllers/manager.controller';
+import { ManagerProfile } from './module/managerProfile.entity';
 import { ManagerService } from './services/manager.service';
 @Module({
-  imports: [],
-  controllers: [ManagerContorller],
+  imports: [TypeOrmModule.forFeature([ManagerProfile])],
+  controllers: [ManagerController],
   providers: [ManagerService],
   exports: [],
 })
