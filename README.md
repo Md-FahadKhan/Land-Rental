@@ -24,50 +24,5 @@
 
 ## Description
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
 
-## Installation
-
-```bash
-$ npm install
-```
-
-## Running the app
-
-```bash
-# development
-$ npm run start
-
-# watch mode
-$ npm run start:dev
-
-# production mode
-$ npm run start:prod
-```
-
-## Test
-
-```bash
-# unit tests
-$ npm run test
-
-# e2e tests
-$ npm run test:e2e
-
-# test coverage
-$ npm run test:cov
-```
-
-## Support
-
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
-
-## Stay in touch
-
-- Author - [Kamil Myśliwiec](https://kamilmysliwiec.com)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
-
-## License
-
-Nest is [MIT licensed](LICENSE).
+This project involves the development of a comprehensive web-based platform tailored to accommodate various user roles, including Admins with responsibilities for user and property management, as well as user activity monitoring and report generation. Managers have administrative powers and oversee transaction approvals, while Landowners can list and manage land properties for sale or rent, and Sellers can list and manage equipment for sale or rent. Users, whether buyers or renters, can search, access transaction histories, and engage in equipment transactions. The platform incorporates essential features like user authentication, authorization, user-friendly dashboards, notifications, messaging, advanced search and filtering, rating and reviews, secure payment integration, document uploads, Google Maps integration, and responsive design. The project follows structured implementation steps and benefits from a collaborative effort among developers, designers, and domain experts to ensure its successful deployment and functionality.
