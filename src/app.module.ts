@@ -1,12 +1,14 @@
 import { Module } from '@nestjs/common';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { ManagerModule } from './Manager/manager.module';
+import { SellerModule } from './Seller/seller.module';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { ManagerModule } from './Manager/manager.module';
-import { TypeOrmModule } from '@nestjs/typeorm';
 
 @Module({
   imports: [
     ManagerModule,
+    SellerModule,
     TypeOrmModule.forRoot({
       type: 'postgres',
       host: 'localhost',

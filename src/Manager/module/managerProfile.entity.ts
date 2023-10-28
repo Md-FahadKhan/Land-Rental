@@ -1,19 +1,17 @@
-import {
-  Column,
-  Entity,
-  ManyToOne,
-  OneToMany,
-  PrimaryGeneratedColumn,
-} from 'typeorm';
+import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 
-@Entity('manager')
+@Entity('managerProfile')
 export class ManagerProfile {
   @PrimaryGeneratedColumn()
-  id: number;
+  managerid: number;
   @Column()
-  name: string;
+  managername: string;
   @Column()
-  username: string;
+  managertitle: string;
   @Column()
-  password: string;
+  managerusername: string;
+  @Column()
+  managerpassword: string;
+  @Column()
+  managerprofilepicture: string;
 }
