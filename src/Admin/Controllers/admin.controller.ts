@@ -27,7 +27,7 @@ import {
 export class AdminController {
   constructor(private readonly adminService: AdminService) {}
 
-    @Get()
+    @Get('hi')
     getHello(): string {
         return "hello from admin";
     }
