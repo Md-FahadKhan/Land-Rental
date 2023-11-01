@@ -7,19 +7,22 @@ import { AppService } from './app.service';
 import { JwtMiddleware } from './Auth/jwt.middleware';
 import { UserModule } from './User/user.module';
 import { AuthModule } from './Auth/auth.module';
+import { LandSeekerModule } from './LandSeekers/landseekers.module';
 
 @Module({
   imports: [
     ManagerModule,
     SellerModule,
     UserModule,
+    LandSeekerModule,
     AuthModule,
+    
     TypeOrmModule.forRoot({
       type: 'postgres',
       host: 'localhost',
       port: 5432,
       username: 'postgres',
-      password: 'fahad',
+      password: 'Shafe01##',
       database: 'land-rentalDB', //Change to your database name
       autoLoadEntities: true,
       synchronize: true,
