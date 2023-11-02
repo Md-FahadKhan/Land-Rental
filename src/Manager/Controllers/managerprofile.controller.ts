@@ -1,28 +1,33 @@
-import { FileInterceptor } from '@nestjs/platform-express';
-import { diskStorage, MulterError } from 'multer';
-import { ManagerService } from '../services/manager.service';
-
 import {
   Body,
   Controller,
   Get,
-  Inject,
   Param,
   Post,
   Put,
+  Req,
+  Session,
   UploadedFile,
+  UseGuards,
   UseInterceptors,
   UsePipes,
   ValidationPipe,
 } from '@nestjs/common';
+import { AuthGuard } from '@nestjs/passport';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { MulterError, diskStorage } from 'multer';
 import { CreateManagerProfileDto } from '../dtos/create-manager.dto';
 import { ManagerProfile } from '../module/managerProfile.entity';
+import { ManagerService } from '../services/manager.service';
 
 @Controller('manager')
 export class ManagerProfileController {
-  constructor(
-    @Inject(ManagerService) private readonly managerService: ManagerService,
-  ) {}
+  constructor(private readonly managerService: ManagerService) {}
+  @Get('hello')
+  getHello(): string {
+    return 'hello from admin';
+  }
+
   @Post('registration')
   @UsePipes(new ValidationPipe())
   @UseInterceptors(
@@ -57,7 +62,6 @@ export class ManagerProfileController {
   ) {
     return this.managerService.updateProfile(id, createmangerDto);
   }
-
   @Get('allManager')
   async findAll(): Promise<ManagerProfile[]> {
     return this.managerService.getAllManager();
@@ -65,5 +69,14 @@ export class ManagerProfileController {
   @Get(':managerid')
   async findOne(@Param('managerid') id: number): Promise<ManagerProfile> {
     return this.managerService.getManagerById(id);
+  }
+  @Post('login')
+  @UseGuards(AuthGuard('local'))
+  login(@Req() req, @Session() session: Record<string, any>): string {
+    // Authentication complete
+    console.log(session);
+    console.log(session.id);
+
+    return req.user;
   }
 }

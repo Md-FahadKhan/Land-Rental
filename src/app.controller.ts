@@ -18,13 +18,13 @@ export class AppController {
   getHello(): string {
     return this.appService.getHello();
   }
-  @Post('/login')
-  @UseGuards(AuthGuard('local'))
-  login(@Request() req, @Session() session: Record<string, any>): string {
-    // authentication complete
-    console.log(session);
-    console.log(session.id);
+  // @Post('/login')
+  // @UseGuards(AuthGuard('local'))
+  // login(@Request() req, @Session() session: Record<string, any>): string {
+  //   // authentication complete
+  //   console.log(session);
+  //   console.log(session.id);
 
-    return req.user;
-  }
+  //   return req.user;
+  // }
 }

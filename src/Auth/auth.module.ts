@@ -1,11 +1,10 @@
 import { Module } from '@nestjs/common';
 import { PassportModule } from '@nestjs/passport';
-import { UserModule } from 'src/User/user.module';
+import { ManagerModule } from 'src/Manager/manager.module';
 import { AuthStrategy } from './auth.strategy';
-// import { UserService } from './user.service';
 
 @Module({
-  imports: [PassportModule, UserModule],
+  imports: [PassportModule, ManagerModule], // Import the ManagerModule here
   controllers: [],
   providers: [AuthStrategy],
   exports: [],

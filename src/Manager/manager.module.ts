@@ -1,14 +1,14 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-
+import { ManagerProfileController } from './Controllers/managerprofile.controller';
 import { ManagerProfile } from './module/managerProfile.entity';
 import { ManagerService } from './services/manager.service';
-import { ManagerProfileController } from './Controllers/managerprofile.controller';
+// Import the repository
 
 @Module({
   imports: [TypeOrmModule.forFeature([ManagerProfile])],
-  controllers: [ManagerProfileController],
   providers: [ManagerService],
-  exports: [],
+  controllers: [ManagerProfileController],
+  exports: [ManagerService],
 })
 export class ManagerModule {}

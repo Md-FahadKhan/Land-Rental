@@ -8,50 +8,11 @@ export class ManagerService {
   constructor(
     @InjectRepository(ManagerProfile)
     private mangerProfileRepository: Repository<ManagerProfile>, // @InjectRepository(ManagerEntity)
-    // private managerRepository: Repository<ManagerEntity>,
-  ) // @InjectRepository(CategoryEntity)
-  // private categoryRepository: Repository<CategoryEntity>,
-  // @InjectRepository(ProductEntity)
-  // private productRepository: Repository<ProductEntity>,
-  {}
-
-  //   async addProductToCategory(
-  //     productId: number,
-  //     categoryId: number,
-  //   ): Promise<any> {
-  //     const product = await this.productRepository.findOne({
-  //       where: { productId: productId },
-  //     });
-
-  //     const category = await this.categoryRepository.findOne({
-  //       where: { categoryId: categoryId },
-  //     });
-
-  //     if (product && category) {
-  //       if (!Array.isArray(product.categories)) {
-  //         product.categories = []; // Initialize it as an empty array if not already an array.
-  //       }
-
-  //       product.categories = [...product.categories, category];
-  //       await this.productRepository.save(product);
-  //     } else {
-  //       return { message: 'Product or category not found' };
-  //     }
-  //   }
-
-  // adminRepository is the local repository
+  ) {}
 
   ManagerRegistration(mangerProfile: ManagerProfile) {
     return this.mangerProfileRepository.save(mangerProfile);
   }
-
-  // async updateProfile(
-  //   id: number,
-  //   updatedAdmin: ManagerProfile,
-  // ): Promise<ManagerProfile> {
-  //   await this.mangerProfileRepository.update({ managerid: id }, updatedAdmin);
-  //   return this.mangerProfileRepository.findOneBy({ managerid: id });
-  // }
 
   async updateProfile(
     id: number,
@@ -83,6 +44,16 @@ export class ManagerService {
   }
   async getManagerById(id: number): Promise<ManagerProfile> {
     return this.mangerProfileRepository.findOneBy({ managerid: id });
+  }
+
+  async getManagerByUsername(
+    managerusername: string,
+  ): Promise<ManagerProfile | undefined> {
+    return this.mangerProfileRepository.findOne({
+      where: {
+        managerusername: managerusername,
+      },
+    });
   }
 }
 
