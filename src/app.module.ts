@@ -1,15 +1,17 @@
 import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { AdminModule } from './Admin/admin.module';
 import { AuthModule } from './Auth/auth.module';
 import { JwtMiddleware } from './Auth/jwt.middleware';
+import { LandownerModule } from './LandOwner/landowner.module';
 import { ManagerModule } from './Manager/manager.module';
 import { SellerModule } from './Seller/seller.module';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { LandownerModule } from './LandOwner/landowner.module';
 
 @Module({
   imports: [
+    AdminModule,
     ManagerModule,
     SellerModule,
     LandownerModule,

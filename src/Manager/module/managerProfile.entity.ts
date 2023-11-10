@@ -1,4 +1,12 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  Entity,
+  JoinColumn,
+  OneToOne,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
+import { ManagerPicture } from './managerPicture.entity';
+import { Manager } from './managerpersonal.entity';
 
 @Entity('managerProfile')
 export class ManagerProfile {
@@ -12,6 +20,15 @@ export class ManagerProfile {
   managerusername: string;
   @Column()
   managerpassword: string;
-  @Column()
-  managerprofilepicture: string;
+
+  @OneToOne(
+    () => ManagerPicture,
+    (managerPicture) => managerPicture.managerProfile,
+    { cascade: true },
+  )
+  @JoinColumn()
+  managerPicture: ManagerPicture;
+
+  @OneToOne(() => Manager, (manager) => manager.managerProfile)
+  manager: Manager;
 }

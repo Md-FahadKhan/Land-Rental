@@ -1,3 +1,7 @@
+import { ManagerProfile } from '../module/managerProfile.entity';
+import { Manager } from '../module/managerpersonal.entity';
+import { Product } from '../module/product.entity';
+
 export class CreateManagerProfileDto {
   // id: number;
   // name: string;
@@ -12,5 +16,13 @@ export class CreateManagerProfileDto {
   managertitle: string;
   managerusername: string;
   managerpassword: string;
-  managerprofilepicture: string;
+  manager: Manager;
+}
+
+export class CreateManagerDto {
+  id: number;
+  name: string;
+  profile: ManagerProfile;
+  manager: Manager;
+  products: Product[];
 }

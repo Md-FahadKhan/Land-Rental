@@ -1,3 +1,6 @@
+import { LandownerProfile } from '../module/landowner.entity';
+import { Landowner } from '../module/landownerpersonal.entity';
+
 export class CreateLandownerProfileDto {
   //  admin: AdminEntity;
   //  managers: ManagerEntity[];
@@ -7,5 +10,11 @@ export class CreateLandownerProfileDto {
   landownertitle: string;
   landownerusername: string;
   landownerpassword: string;
-  landownerprofilepicture: string;
+
+  landowner: Landowner;
+}
+export class CreateLandownerDto {
+  id: number;
+  name: string;
+  profile: LandownerProfile;
 }

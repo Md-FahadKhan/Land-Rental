@@ -1,7 +1,6 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
 import { Strategy } from 'passport-local';
-import { ManagerProfile } from 'src/Manager/module/managerProfile.entity';
 import { ManagerService } from 'src/Manager/services/manager.service';
 // Import the ManagerProfile entity
 
@@ -11,18 +10,18 @@ export class AuthStrategy extends PassportStrategy(Strategy) {
     super();
   }
 
-  async validate(username: string, password: string): Promise<ManagerProfile> {
-    const manager: ManagerProfile =
-      await this.managerService.getManagerByUsername(username);
-    if (!manager) {
-      throw new UnauthorizedException();
-    }
-    if (manager.managerpassword === password) {
-      return manager;
-    } else {
-      throw new UnauthorizedException();
-    }
-  }
+  // async validate(username: string, password: string): Promise<ManagerProfile> {
+  //   const manager: ManagerProfile =
+  //     await this.managerService.getManagerByUsername(username);
+  //   if (!manager) {
+  //     throw new UnauthorizedException();
+  //   }
+  //   if (manager.managerpassword === password) {
+  //     return manager;
+  //   } else {
+  //     throw new UnauthorizedException();
+  //   }
+  // }
 }
 
 //@Injectable()

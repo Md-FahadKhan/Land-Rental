@@ -2,6 +2,8 @@ import {
   Body,
   Controller,
   Get,
+  HttpException,
+  HttpStatus,
   Param,
   Post,
   Put,
@@ -19,16 +21,99 @@ import { MulterError, diskStorage } from 'multer';
 import { CreateManagerProfileDto } from '../dtos/create-manager.dto';
 import { ManagerProfile } from '../module/managerProfile.entity';
 import { ManagerService } from '../services/manager.service';
+import { ManagerPicture } from '../module/managerPicture.entity';
+import { CreateManagerPictureDto } from '../dtos/managerPicture.dto';
+import { SessionGuard } from '../manager.gaurds';
+import { Manager } from '../module/managerpersonal.entity';
 
 @Controller('manager')
 export class ManagerProfileController {
   constructor(private readonly managerService: ManagerService) {}
+
+  @Post('add')
+  async createManagerWithProfile(
+    @Body() data: { manager: Manager; managerProfile: ManagerProfile },
+  ) {
+    try {
+      const { manager, managerProfile } = data;
+
+      const result = await this.managerService.createManager(
+        manager,
+        managerProfile,
+      );
+      return {
+        success: true,
+        message: 'Manager and ManagerProfile created successfully',
+        data: result,
+      };
+    } catch (error) {
+      return {
+        success: false,
+        message: 'Manager and ManagerProfile creation failed',
+        error: error.message,
+      };
+    }
+  }
+
   @Get('hello')
   getHello(): string {
     return 'hello from admin';
   }
 
-  @Post('registration')
+  @Get('index')
+  @UseGuards(SessionGuard)
+  getIndex(@Session() session) {
+    console.log(session.email);
+    return this.managerService.getAll();
+  }
+
+  @Get('profiledetails')
+  @UseGuards(SessionGuard)
+  getProfile(@Session() session) {
+    console.log(session.email);
+    console.log('Reached the getProfile route');
+    console.log('Session email:', session.email);
+    return this.managerService.getProfile();
+  }
+
+  @Put('update/:id') // Use a PUT request to update a profile by its ID
+  @UseGuards(SessionGuard)
+  async updateProfile(
+    @Param('id') id: number,
+    @Body() updatedProfile: ManagerProfile,
+  ) {
+    try {
+      const result = await this.managerService.updateProfile(
+        id,
+        updatedProfile,
+      );
+      return { success: true, message: 'Profile updated successfully' };
+    } catch (error) {
+      return {
+        success: false,
+        message: 'Profile update failed',
+        error: error.message,
+      };
+    }
+  }
+
+  @Post('login')
+  async login(
+    @Body() createManagerProfileDto: CreateManagerProfileDto,
+    @Session() session,
+  ) {
+    const user = await this.managerService.login(createManagerProfileDto);
+
+    if (user) {
+      session.email = createManagerProfileDto.managerusername;
+      return true;
+    } else {
+      console.log('Unauthorized login attempt');
+      throw new HttpException('UnauthorizedException', HttpStatus.UNAUTHORIZED);
+    }
+  }
+
+  @Post('picture')
   @UsePipes(new ValidationPipe())
   @UseInterceptors(
     FileInterceptor('profilepic', {
@@ -48,35 +133,19 @@ export class ManagerProfileController {
       }),
     }),
   )
-  addSeller(
-    @Body() createmangerDto: CreateManagerProfileDto,
+  async addLandPicture(
+    @Body() createManagerPictureDto: CreateManagerPictureDto,
     @UploadedFile() file: Express.Multer.File,
-  ): Promise<ManagerProfile> {
-    createmangerDto.managerprofilepicture = file.filename;
-    return this.managerService.ManagerRegistration(createmangerDto);
-  }
-  @Put('update/:managerid') // Use ':managerid' to match the @Param name
-  updateProfile(
-    @Param('managerid') id: number, // Use 'managerid' to match the route parameter
-    @Body() createmangerDto: CreateManagerProfileDto,
-  ) {
-    return this.managerService.updateProfile(id, createmangerDto);
-  }
-  @Get('allManager')
-  async findAll(): Promise<ManagerProfile[]> {
-    return this.managerService.getAllManager();
-  }
-  @Get(':managerid')
-  async findOne(@Param('managerid') id: number): Promise<ManagerProfile> {
-    return this.managerService.getManagerById(id);
-  }
-  @Post('login')
-  @UseGuards(AuthGuard('local'))
-  login(@Req() req, @Session() session: Record<string, any>): string {
-    // Authentication complete
-    console.log(session);
-    console.log(session.id);
+  ): Promise<ManagerPicture> {
+    if (!file) {
+      throw new HttpException(
+        'Profile picture is required.',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
 
-    return req.user;
+    createManagerPictureDto.managerPicturename = file.filename;
+
+    return this.managerService.addManagerPicture(createManagerPictureDto);
   }
 }

@@ -1,6 +1,3 @@
-import { FileInterceptor } from '@nestjs/platform-express';
-import { diskStorage, MulterError } from 'multer';
-
 import {
   Body,
   Controller,
@@ -17,14 +14,84 @@ import {
   UsePipes,
   ValidationPipe,
 } from '@nestjs/common';
-import { LandownerService } from '../services/landowner.service';
-import { SessionGuard } from '../landowner.gaurds';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { MulterError, diskStorage } from 'multer';
 import { CreateLandownerProfileDto } from '../dtos/create-landowner.dto';
+import { CreateLandOwnerPictureDto } from '../dtos/landOwnerPicture.dto';
+import { SessionGuard } from '../landowner.gaurds';
+import { LandOwnerPicture } from '../module/landOwnerPicture.entity';
 import { LandownerProfile } from '../module/landowner.entity';
+import { Landowner } from '../module/landownerpersonal.entity';
+import { LandownerService } from '../services/landowner.service';
 
 @Controller('landowner')
 export class LandownerProfileController {
   constructor(private readonly landownerService: LandownerService) {}
+
+  //this is for create a user controller
+  //
+  // @Post('add')
+  // async createLandownerWithProfile(
+  //   @Body() data: { landowner: Landowner; landownerProfile: LandownerProfile },
+  // ) {
+  //   // try {
+
+  //   const { landowner, landownerProfile } = data;
+
+  //   console.log('Received data:', data);
+  //   console.log(landowner);
+  //   console.log(landownerProfile);
+  //   const createdUserProfile =
+  //     await this.landownerService.createlandowerProfile(landownerProfile);
+  //   const result = await this.landownerService.createLandowner(
+  //     landowner,
+  //     createdUserProfile,
+  //   );
+
+  //   return {
+  //     success: true,
+  //     message: 'Landowner and LandownerProfile created successfully',
+  //     data: result,
+  //   };
+  //   // } catch (error) {
+  //   //   return {
+  //   //     success: false,
+  //   //     message: 'Landowner and LandownerProfile creation failed',
+  //   //     error: error.message,
+  //   //   };
+  //   //}
+  // }
+
+  @Post('add')
+  async createLandownerWithProfile(
+    @Body() data: { landowner: Landowner; landownerProfile: LandownerProfile },
+  ) {
+    try {
+      const { landowner, landownerProfile } = data;
+      // const name = landowner.name;
+      // const username = landownerProfile.landownerusername;
+      // const landownertitle = landownerProfile.landownertitle;
+      // const landownername = landownerProfile.landownername;
+      // const landownerpassword = landownerProfile.landownerpassword;
+      // const landownerprofilepic = landownerProfile.landownerprofilepic;
+
+      const result = await this.landownerService.createLandowner(
+        landowner,
+        landownerProfile,
+      );
+      return {
+        success: true,
+        message: 'Landowner and LandownerProfile created successfully',
+        data: result,
+      };
+    } catch (error) {
+      return {
+        success: false,
+        message: 'Landowner and LandownerProfile creation failed',
+        error: error.message,
+      };
+    }
+  }
 
   @Get('hello')
   getHello(): string {
@@ -37,10 +104,13 @@ export class LandownerProfileController {
     console.log(session.email);
     return this.landownerService.getAll();
   }
+
   @Get('profiledetails')
   @UseGuards(SessionGuard)
   getProfile(@Session() session) {
     console.log(session.email);
+    console.log('Reached the getProfile route');
+    console.log('Session email:', session.email);
     return this.landownerService.getProfile();
   }
 
@@ -69,7 +139,7 @@ export class LandownerProfileController {
   async login(
     @Body() createLandownerProfileDto: CreateLandownerProfileDto,
     @Session() session,
-  ): Promise<boolean> {
+  ) {
     const user = await this.landownerService.login(createLandownerProfileDto);
 
     if (user) {
@@ -81,7 +151,7 @@ export class LandownerProfileController {
     }
   }
 
-  @Post('registration')
+  @Post('picture')
   @UsePipes(new ValidationPipe())
   @UseInterceptors(
     FileInterceptor('profilepic', {
@@ -101,24 +171,19 @@ export class LandownerProfileController {
       }),
     }),
   )
-  async addSeller(
-    @Body() createLandownerProfileDto: CreateLandownerProfileDto,
+  async addLandPicture(
+    @Body() createLandOwnerPictureDto: CreateLandOwnerPictureDto,
     @UploadedFile() file: Express.Multer.File,
-  ): Promise<LandownerProfile> {
-    createLandownerProfileDto.landownerprofilepicture = file.filename;
-    const res = await this.landownerService.SellerRegistration(
-      createLandownerProfileDto,
-    );
-    return res;
-  }
+  ): Promise<LandOwnerPicture> {
+    if (!file) {
+      throw new HttpException(
+        'Profile picture is required.',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
 
-  //
-  //
-  @Put('updatewithmail/:id')
-  async updateProfileWithMail(
-    @Param('id') id: number,
-    @Body() updatedProfile: LandownerProfile,
-  ): Promise<LandownerProfile | null> {
-    return this.landownerService.updateProfilewithMial(id, updatedProfile);
+    createLandOwnerPictureDto.landOwnerPicturename = file.filename;
+
+    return this.landownerService.addLandOwnerPicture(createLandOwnerPictureDto);
   }
 }
