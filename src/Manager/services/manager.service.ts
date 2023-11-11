@@ -2,15 +2,19 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import * as bcrypt from 'bcrypt';
 import { Repository } from 'typeorm';
-import { CreateCategoryDto } from '../dtos/Create_Category_dto';
-import { CreateProductDto } from '../dtos/Create_Product_dto';
+// import { CreateCategoryDto } from '../dtos/Create_Category_dto';
+// import { CreateProductDto } from '../dtos/Create_Product_dto';
 import { CreateManagerProfileDto } from '../dtos/create-manager.dto';
 import { CreateManagerPictureDto } from '../dtos/managerPicture.dto';
-import { Category } from '../module/category.entity';
+// import { Category } from '../module/category.entity';
+import { CreateCategoryDto } from 'src/Products/dtos/Create_Category_dto';
+import { CreateProductDto } from 'src/Products/dtos/Create_Product_dto';
+import { Category } from 'src/Products/module/category.entity';
+import { Product } from 'src/Products/module/product.entity';
 import { ManagerPicture } from '../module/managerPicture.entity';
 import { ManagerProfile } from '../module/managerProfile.entity';
 import { Manager } from '../module/managerpersonal.entity';
-import { Product } from '../module/product.entity';
+// import { Product } from '../module/product.entity';
 
 @Injectable()
 export class ManagerService {

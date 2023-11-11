@@ -10,13 +10,16 @@ import {
   Session,
   UseGuards,
 } from '@nestjs/common';
-import { CreateProductDto } from '../dtos/Create_Product_dto';
+// import { CreateProductDto } from '../dtos/Create_Product_dto';
+import { CreateCategoryDto } from 'src/Products/dtos/Create_Category_dto';
+import { CreateProductDto } from 'src/Products/dtos/Create_Product_dto';
+import { Product } from 'src/Products/module/product.entity';
 import { CreateManagerProfileDto } from '../dtos/create-manager.dto';
 import { SessionGuard } from '../manager.gaurds';
 import { ManagerService } from '../services/manager.service';
 
-import { CreateCategoryDto } from '../dtos/Create_Category_dto';
-import { Product } from '../module/product.entity';
+// import { CreateCategoryDto } from '../dtos/Create_Category_dto';
+// import { Product } from '../module/product.entity';
 
 interface Category {
   categoryId: number;

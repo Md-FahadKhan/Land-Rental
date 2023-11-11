@@ -1,4 +1,4 @@
-export class CreateCategoryDto {
-  categoryId: number;
-  name: string;
-}
+// export class CreateCategoryDto {
+//   categoryId: number;
+//   name: string;
+// }

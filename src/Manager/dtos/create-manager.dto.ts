@@ -1,6 +1,7 @@
+import { Product } from 'src/Products/module/product.entity';
 import { ManagerProfile } from '../module/managerProfile.entity';
 import { Manager } from '../module/managerpersonal.entity';
-import { Product } from '../module/product.entity';
+// import { Product } from '../module/product.entity';
 
 export class CreateManagerProfileDto {
   // id: number;

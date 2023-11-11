@@ -1,14 +1,14 @@
-import { Column, Entity, ManyToMany, PrimaryGeneratedColumn } from 'typeorm';
-import { Product } from './product.entity';
+// import { Column, Entity, ManyToMany, PrimaryGeneratedColumn } from 'typeorm';
+// import { Product } from './product.entity';
 
-@Entity()
-export class Category {
-  @PrimaryGeneratedColumn()
-  categoryId: number;
+// @Entity()
+// export class Category {
+//   @PrimaryGeneratedColumn()
+//   categoryId: number;
 
-  @Column()
-  name: string;
+//   @Column()
+//   name: string;
 
-  @ManyToMany(() => Product, (product) => product.categories)
-  products: Product[];
-}
+//   @ManyToMany(() => Product, (product) => product.categories)
+//   products: Product[];
+// }
