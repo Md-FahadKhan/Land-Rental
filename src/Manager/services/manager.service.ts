@@ -1,4 +1,9 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import {
+  HttpException,
+  HttpStatus,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import * as bcrypt from 'bcrypt';
 import { Repository } from 'typeorm';
@@ -14,6 +19,7 @@ import { Product } from 'src/Products/module/product.entity';
 import { ManagerPicture } from '../module/managerPicture.entity';
 import { ManagerProfile } from '../module/managerProfile.entity';
 import { Manager } from '../module/managerpersonal.entity';
+import { LandProfile } from 'src/LandOwner/module/addLand.entity';
 // import { Product } from '../module/product.entity';
 
 @Injectable()
@@ -29,14 +35,43 @@ export class ManagerService {
     private categoryRepository: Repository<Category>,
     @InjectRepository(Product)
     private productRepository: Repository<Product>,
+    @InjectRepository(LandProfile)
+    private landProfileRepository: Repository<LandProfile>,
   ) {}
   // Add product
   //
+
+  async findAllBylandId(landId: number): Promise<LandProfile[]> {
+    return this.landProfileRepository.find({
+      where: { landid: landId },
+    });
+  }
+
+  async getAllLand(): Promise<LandProfile[]> {
+    return this.landProfileRepository.find();
+  }
   //
   addProduct(productInfo: CreateProductDto) {
     return this.productRepository.save(productInfo);
   }
+  getAllProduct(): Promise<Product[]> {
+    return this.productRepository.find();
+  }
+  async findOneById(id: number): Promise<Product> {
+    return this.productRepository.findOne({ where: { productId: id } });
+  }
 
+  async update(
+    id: number,
+    updateLandProfileDto: Partial<Product>,
+  ): Promise<Product> {
+    await this.productRepository.update(id, updateLandProfileDto);
+    return this.findOneById(id);
+  }
+
+  async removeProduct(id: number): Promise<void> {
+    await this.productRepository.delete(id);
+  }
   addCategory(categoryInfo: CreateCategoryDto) {
     return this.categoryRepository.save(categoryInfo);
   }

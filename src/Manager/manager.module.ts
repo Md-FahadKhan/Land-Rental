@@ -8,6 +8,7 @@ import { ManagerPicture } from './module/managerPicture.entity';
 import { ManagerProfile } from './module/managerProfile.entity';
 import { Manager } from './module/managerpersonal.entity';
 // import { Product } from './module/product.entity';
+import { LandProfile } from 'src/LandOwner/module/addLand.entity';
 import { Category } from 'src/Products/module/category.entity';
 import { Product } from 'src/Products/module/product.entity';
 import { LandController } from './Controllers/addLand.controller';
@@ -27,6 +28,7 @@ import { ManagerPictureService } from './services/managerPicture.service';
       Product,
       Category,
       AddLand,
+      LandProfile,
     ]),
   ],
   providers: [ManagerService, LandService, ManagerPictureService],

@@ -1,22 +1,27 @@
 import {
   Body,
   Controller,
+  Delete,
   ForbiddenException,
   Get,
   HttpException,
   HttpStatus,
   NotFoundException,
+  Param,
   Post,
+  Put,
   Session,
   UseGuards,
 } from '@nestjs/common';
+import { ManagerService } from 'src/Manager/services/manager.service';
 // import { CreateProductDto } from '../dtos/Create_Product_dto';
 import { CreateCategoryDto } from 'src/Products/dtos/Create_Category_dto';
 import { CreateProductDto } from 'src/Products/dtos/Create_Product_dto';
 import { Product } from 'src/Products/module/product.entity';
 import { CreateManagerProfileDto } from '../dtos/create-manager.dto';
 import { SessionGuard } from '../manager.gaurds';
-import { ManagerService } from '../services/manager.service';
+// import { ManagerService } from '../services/manager.service';
+import { LandProfile } from 'src/LandOwner/module/addLand.entity';
 
 // import { CreateCategoryDto } from '../dtos/Create_Category_dto';
 // import { Product } from '../module/product.entity';
@@ -28,10 +33,70 @@ interface Category {
 @Controller('manager')
 export class ManagerController {
   constructor(private readonly managerService: ManagerService) {}
+
+  ///
+  //
+
+  //
+  //
+
+  @Get('seeAllLandPost')
+  async getAllLand(): Promise<{
+    success: boolean;
+    message?: string;
+    data?: LandProfile[];
+  }> {
+    try {
+      const landProfiles = await this.managerService.getAllLand();
+      return {
+        success: true,
+        data: landProfiles,
+      };
+    } catch (error) {
+      return {
+        success: false,
+        message: 'Failed to retrieve land profiles',
+      };
+    }
+  }
+
+  @Get('buyLand/:landId')
+  findAllByOwnerId(@Param('landId') landId: number) {
+    return this.managerService.findAllBylandId(landId);
+  }
+
+  //
+  //
   @Post('addProduct')
   @UseGuards(SessionGuard)
   createProduct(@Body() product: CreateProductDto): Promise<Product> {
     return this.managerService.addProduct(product);
+  }
+  @Get('getAllProduct')
+  async getAllProducts(): Promise<{ success: boolean; data?: Product[] }> {
+    try {
+      const products = await this.managerService.getAllProduct();
+      return { success: true, data: products };
+    } catch (error) {
+      return { success: false };
+    }
+  }
+  @Get('singleProduct/:id')
+  findOne(@Param('id') id: number) {
+    return this.managerService.findOneById(id);
+  }
+
+  @Put('updateProduct/:id')
+  update(
+    @Param('id') id: number,
+    @Body() updateLandProfileDto: Partial<Product>,
+  ) {
+    return this.managerService.update(id, updateLandProfileDto);
+  }
+
+  @Delete('deleteProduct:id')
+  remove(@Param('id') id: number) {
+    return this.managerService.removeProduct(id);
   }
 
   @Post('addCategory')

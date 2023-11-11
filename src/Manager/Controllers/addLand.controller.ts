@@ -23,20 +23,20 @@ export class LandController {
   // only for testing
   constructor(private readonly landProfileService: LandService) {}
 
-  @Post(':ownerId')
+  @Post(':managerId')
   create(
-    @Param('ownerId') ownerId: number,
+    @Param('managerId') managerId: number,
     @Body() createLandProfileDto: Partial<AddLand>,
   ) {
-    return this.landProfileService.create(ownerId, createLandProfileDto);
+    return this.landProfileService.create(managerId, createLandProfileDto);
   }
 
-  @Get(':ownerId')
-  findAllByOwnerId(@Param('ownerId') ownerId: number) {
-    return this.landProfileService.findAllByOwnerId(ownerId);
+  @Get(':managerId')
+  findAllByOwnerId(@Param('managerId') managerId: number) {
+    return this.landProfileService.findAllByOwnerId(managerId);
   }
 
-  @Get(':ownerId/:id')
+  @Get(':managerId/:id')
   findOne(@Param('id') id: number) {
     return this.landProfileService.findOneById(id);
   }

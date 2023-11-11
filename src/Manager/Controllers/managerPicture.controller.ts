@@ -40,7 +40,7 @@ export class ManagerPictureController {
       }),
     }),
   )
-  async addLandPicture(
+  async addManagerPicture(
     @Param('id') ownerId: number,
     @Body() createManagerPicture: ManagerPicture,
     @UploadedFile() file: Express.Multer.File,

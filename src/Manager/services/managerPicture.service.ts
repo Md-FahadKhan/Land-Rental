@@ -41,6 +41,7 @@ export class ManagerPictureService {
     }
   }
 
+ 
   //change picture
 
   //   async changePicture(fileFullName: string): Promise<string> {

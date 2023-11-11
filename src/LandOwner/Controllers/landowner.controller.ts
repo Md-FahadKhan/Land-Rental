@@ -20,7 +20,7 @@ export class LandowneController {
 
   @Get('hello')
   getHello(): string {
-    return 'hello from admin';
+    return 'hello from landOwner';
   }
   @Get('profile')
   @UseGuards(SessionGuard)

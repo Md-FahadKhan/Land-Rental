@@ -27,4 +27,5 @@ export class AddLand {
   // this is for admin relation with manager
   // @OneToMany(() => Addmanager, (manager) => manager.admin)
   // managers: Managers[];
+  
 }
