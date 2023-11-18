@@ -1,6 +1,3 @@
-import { FileInterceptor } from '@nestjs/platform-express';
-import { diskStorage, MulterError } from 'multer';
-
 import {
   Body,
   Controller,
@@ -10,6 +7,7 @@ import {
   Param,
   Post,
   Put,
+  Req,
   Session,
   UploadedFile,
   UseGuards,
@@ -17,15 +15,47 @@ import {
   UsePipes,
   ValidationPipe,
 } from '@nestjs/common';
-
+import { AuthGuard } from '@nestjs/passport';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { MulterError, diskStorage } from 'multer';
 import { CreateSellerProfileDto } from '../dtos/create-seller.dto';
+
+import { SellerService } from '../services/seller.service';
+import { SellerPicture } from '../module/sellerPicture.entity';
+import { CreateSellerPictureDto } from '../dtos/sellerPicture.dto';
+
+import { Seller } from '../module/sellerpersonal.entity';
 import { SellerProfile } from '../module/seller.entity';
 import { SessionGuard } from '../seller.guards';
-import { SellerService } from '../services/seller.service';
 
 @Controller('seller')
 export class SellerProfileController {
   constructor(private readonly sellerService: SellerService) {}
+
+  @Post('add')
+  async createSellerWithProfile(
+    @Body() data: { seller: Seller; sellerProfile: SellerProfile },
+  ) {
+    try {
+      const { seller, sellerProfile } = data;
+
+      const result = await this.sellerService.createSeller(
+        seller,
+        sellerProfile,
+      );
+      return {
+        success: true,
+        message: 'Seller and SellerProfile created successfully',
+        data: result,
+      };
+    } catch (error) {
+      return {
+        success: false,
+        message: 'Seller and SellerProfile creation failed',
+        error: error.message,
+      };
+    }
+  }
 
   @Get('hello')
   getHello(): string {
@@ -39,55 +69,12 @@ export class SellerProfileController {
     return this.sellerService.getAll();
   }
 
-  @Post('login')
-  async login(
-    @Body() createSellerProfileDto: CreateSellerProfileDto,
-    @Session() session,
-  ): Promise<boolean> {
-    const user = await this.sellerService.login(createSellerProfileDto);
-
-    if (user) {
-      session.email = createSellerProfileDto.sellerusername;
-      return true;
-    } else {
-      console.log('Unauthorized login attempt');
-      throw new HttpException('UnauthorizedException', HttpStatus.UNAUTHORIZED);
-    }
-  }
-
-  @Post('registration')
-  @UsePipes(new ValidationPipe())
-  @UseInterceptors(
-    FileInterceptor('profilepic', {
-      fileFilter: (req, file, cb) => {
-        if (file.originalname.match(/^.*\.(jpg|webp|png|jpeg)$/))
-          cb(null, true);
-        else {
-          cb(new MulterError('LIMIT_UNEXPECTED_FILE', 'image'), false);
-        }
-      },
-      limits: { fileSize: 30000 },
-      storage: diskStorage({
-        destination: './upload',
-        filename: function (req, file, cb) {
-          cb(null, Date.now() + file.originalname);
-        },
-      }),
-    }),
-  )
-  async addSeller(
-    @Body() createsellerDto: CreateSellerProfileDto,
-    @UploadedFile() file: Express.Multer.File,
-  ): Promise<SellerProfile> {
-    createsellerDto.sellerprofilepicture = file.filename;
-    const res = await this.sellerService.SellerRegistration(createsellerDto);
-    return res;
-  }
-
   @Get('profiledetails')
   @UseGuards(SessionGuard)
   getProfile(@Session() session) {
     console.log(session.email);
+    console.log('Reached the getProfile route');
+    console.log('Session email:', session.email);
     return this.sellerService.getProfile();
   }
 
@@ -109,24 +96,55 @@ export class SellerProfileController {
     }
   }
 
-  @Put('updateprofilepicture/:id') // Use a PUT request to update a profile by its ID
-  @UseGuards(SessionGuard)
-  async updateProfilePricture(
-    @Param('id') id: number,
-    @Body() updatedProfile: SellerProfile,
+  @Post('login')
+  async login(
+    @Body() createSellerProfileDto: CreateSellerProfileDto,
+    @Session() session,
   ) {
-    try {
-      const result = await this.sellerService.updateProfilePricture(
-        id,
-        updatedProfile,
-      );
-      return { success: true, message: 'Profile picture updated successfully' };
-    } catch (error) {
-      return {
-        success: false,
-        message: 'Profile picture update failed',
-        error: error.message,
-      };
+    const user = await this.sellerService.login(createSellerProfileDto);
+
+    if (user) {
+      session.email = createSellerProfileDto.sellerusername;
+      return true;
+    } else {
+      console.log('Unauthorized login attempt');
+      throw new HttpException('UnauthorizedException', HttpStatus.UNAUTHORIZED);
     }
+  }
+
+  @Post('picture')
+  @UsePipes(new ValidationPipe())
+  @UseInterceptors(
+    FileInterceptor('profilepic', {
+      fileFilter: (req, file, cb) => {
+        if (file.originalname.match(/^.*\.(jpg|webp|png|jpeg)$/))
+          cb(null, true);
+        else {
+          cb(new MulterError('LIMIT_UNEXPECTED_FILE', 'image'), false);
+        }
+      },
+      limits: { fileSize: 30000 },
+      storage: diskStorage({
+        destination: './upload',
+        filename: function (req, file, cb) {
+          cb(null, Date.now() + file.originalname);
+        },
+      }),
+    }),
+  )
+  async addLandPicture(
+    @Body() createSellerPictureDto: CreateSellerPictureDto,
+    @UploadedFile() file: Express.Multer.File,
+  ): Promise<SellerPicture> {
+    if (!file) {
+      throw new HttpException(
+        'Profile picture is required.',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+
+    createSellerPictureDto.sellerPicturename = file.filename;
+
+    return this.sellerService.addSellerPicture(createSellerPictureDto);
   }
 }

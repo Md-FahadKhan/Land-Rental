@@ -1,9 +1,4 @@
-import {
-  HttpException,
-  HttpStatus,
-  Injectable,
-  NotFoundException,
-} from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import * as bcrypt from 'bcrypt';
 import { Repository } from 'typeorm';
@@ -12,6 +7,7 @@ import { Repository } from 'typeorm';
 import { CreateManagerProfileDto } from '../dtos/create-manager.dto';
 import { CreateManagerPictureDto } from '../dtos/managerPicture.dto';
 // import { Category } from '../module/category.entity';
+import { LandProfile } from 'src/LandOwner/module/addLand.entity';
 import { CreateCategoryDto } from 'src/Products/dtos/Create_Category_dto';
 import { CreateProductDto } from 'src/Products/dtos/Create_Product_dto';
 import { Category } from 'src/Products/module/category.entity';
@@ -19,11 +15,11 @@ import { Product } from 'src/Products/module/product.entity';
 import { ManagerPicture } from '../module/managerPicture.entity';
 import { ManagerProfile } from '../module/managerProfile.entity';
 import { Manager } from '../module/managerpersonal.entity';
-import { LandProfile } from 'src/LandOwner/module/addLand.entity';
 // import { Product } from '../module/product.entity';
-
+import * as nodemailer from 'nodemailer';
 @Injectable()
 export class ManagerService {
+  private transporter;
   constructor(
     @InjectRepository(Manager)
     private managerRepository: Repository<Manager>,
@@ -37,8 +33,36 @@ export class ManagerService {
     private productRepository: Repository<Product>,
     @InjectRepository(LandProfile)
     private landProfileRepository: Repository<LandProfile>,
-  ) {}
+  ) {
+    this.transporter = nodemailer.createTransport({
+      service: 'gmail',
+      auth: {
+        user: 'mdfahadkhan01701@gmail.com', // replace with your email
+        pass: 'arkd nbjc fpsp lsrk', // replace with your email password or use app-specific password
+      },
+    });
+  }
   // Add product
+
+  async sendEmail(to: string, subject: string, text: string) {
+    const mailOptions = {
+      from: 'mdfahadkhan01701@gmail.com',
+      to,
+      subject,
+      text,
+    };
+
+    try {
+      await this.transporter.sendMail(mailOptions);
+      console.log('Email sent successfully');
+    } catch (error) {
+      console.error('Error sending email:', error);
+      throw new HttpException(
+        'Failed to send email',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+  }
   //
 
   async findAllBylandId(landId: number): Promise<LandProfile[]> {
@@ -101,10 +125,7 @@ export class ManagerService {
     }
   }
 
-  //Create Manager
-  //
-  //
-  //
+ 
 
   async createManager(
     manager: Manager,

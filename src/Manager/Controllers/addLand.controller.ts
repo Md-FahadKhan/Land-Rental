@@ -3,20 +3,13 @@ import {
   Controller,
   Delete,
   Get,
-  HttpException,
-  HttpStatus,
   Param,
   Post,
   Put,
-  UploadedFile,
-  UseInterceptors,
-  UsePipes,
-  ValidationPipe,
 } from '@nestjs/common';
-import { FileInterceptor } from '@nestjs/platform-express';
-import { MulterError, diskStorage } from 'multer';
-import { LandService } from '../services/addLand.service';
+import { AddLandDto } from '../dtos/addLand.dto';
 import { AddLand } from '../module/addLand.entity';
+import { LandService } from '../services/addLand.service';
 
 @Controller('manageraddland')
 export class LandController {
@@ -26,7 +19,7 @@ export class LandController {
   @Post(':managerId')
   create(
     @Param('managerId') managerId: number,
-    @Body() createLandProfileDto: Partial<AddLand>,
+    @Body() createLandProfileDto: AddLandDto,
   ) {
     return this.landProfileService.create(managerId, createLandProfileDto);
   }

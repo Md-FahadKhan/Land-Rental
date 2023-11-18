@@ -2,6 +2,7 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { AddLand } from '../module/addLand.entity';
+import { AddLandDto } from '../dtos/addLand.dto';
 
 @Injectable()
 export class LandService {
@@ -13,7 +14,7 @@ export class LandService {
 
   async create(
     ownerId: number,
-    createLandProfileDto: Partial<AddLand>,
+    createLandProfileDto: AddLandDto,
   ): Promise<AddLand> {
     const landProfile = this.addLandRepository.create({
       ...createLandProfileDto,
