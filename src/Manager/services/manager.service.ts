@@ -17,6 +17,7 @@ import { ManagerProfile } from '../module/managerProfile.entity';
 import { Manager } from '../module/managerpersonal.entity';
 // import { Product } from '../module/product.entity';
 import * as nodemailer from 'nodemailer';
+import { SellerProfile } from 'src/Seller/module/seller.entity';
 @Injectable()
 export class ManagerService {
   private transporter;
@@ -33,6 +34,8 @@ export class ManagerService {
     private productRepository: Repository<Product>,
     @InjectRepository(LandProfile)
     private landProfileRepository: Repository<LandProfile>,
+    @InjectRepository(SellerProfile)
+    private sellerProfileRepository: Repository<SellerProfile>,
   ) {
     this.transporter = nodemailer.createTransport({
       service: 'gmail',
@@ -125,8 +128,6 @@ export class ManagerService {
     }
   }
 
- 
-
   async createManager(
     manager: Manager,
     managerProfile: ManagerProfile,
@@ -151,16 +152,29 @@ export class ManagerService {
       },
     });
   }
-  getProfile(): Promise<ManagerProfile[]> {
-    return this.managerProfileRepository.find({
-      select: {
-        managername: true,
-        managertitle: true,
-        managerusername: true,
-        managerpassword: true,
-      },
-    });
+  // getProfile(): Promise<[SellerProfile]> {
+  //   return this.sellerProfileRepository.find({
+  //     select: {
+  //       sellername: true,
+  //       sellertitle: true,
+  //       sellerusername: true,
+  //       sellerpassword: true,
+  //     },
+  //   });
+  // }
+  async getAllSellerdetails(): Promise<SellerProfile[]> {
+    return this.sellerProfileRepository.find();
   }
+  // getProfile(): Promise<ManagerProfile[]> {
+  //   return this.managerProfileRepository.find({
+  //     select: {
+  //       managername: true,
+  //       managertitle: true,
+  //       managerusername: true,
+  //       managerpassword: true,
+  //     },
+  //   });
+  // }
   async getProfileByEmail(email: string): Promise<ManagerProfile | null> {
     return this.managerProfileRepository.findOne({
       where: { managerusername: email },

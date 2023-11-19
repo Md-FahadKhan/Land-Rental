@@ -69,7 +69,7 @@ export class SellerProfileController {
     return this.sellerService.getAll();
   }
 
-  @Get('profiledetails')
+  @Get('allprofiledetails')
   @UseGuards(SessionGuard)
   getProfile(@Session() session) {
     console.log(session.email);

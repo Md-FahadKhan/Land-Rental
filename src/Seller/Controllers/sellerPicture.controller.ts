@@ -1,3 +1,4 @@
+import { Seller } from 'src/Seller/module/sellerpersonal.entity';
 import {
   Body,
   Controller,
@@ -12,13 +13,13 @@ import {
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { MulterError, diskStorage } from 'multer';
-import { ManagerPicture } from '../module/managerPicture.entity';
-import { ManagerPictureService } from '../services/managerPicture.service';
+import { SellerPicture } from '../module/sellerPicture.entity';
+import { SellerPictureService } from '../services/sellerPicture.service';
 
-@Controller('manager')
-export class ManagerPictureController {
+@Controller('seller')
+export class SellerPictureController {
   // only for testing
-  constructor(private readonly managerProfileService: ManagerPictureService) {}
+  constructor(private readonly sellerProfileService: SellerPictureService) {}
 
   @Post('upload/:id')
   @UsePipes(new ValidationPipe())
@@ -40,11 +41,11 @@ export class ManagerPictureController {
       }),
     }),
   )
-  async addManagerPicture(
+  async addSellerPicture(
     @Param('id') ownerId: number,
-    @Body() createManagerPicture: ManagerPicture,
+    @Body() createSellerPicture: SellerPicture,
     @UploadedFile() file: Express.Multer.File,
-  ): Promise<ManagerPicture> {
+  ): Promise<SellerPicture> {
     if (!file) {
       throw new HttpException(
         'Profile picture is required.',
@@ -52,11 +53,11 @@ export class ManagerPictureController {
       );
     }
 
-    createManagerPicture.managerPicturename = file.filename;
+    createSellerPicture.sellerPicturename = file.filename;
 
-    return this.managerProfileService.addManagerPicture(
+    return this.sellerProfileService.addSellerPicture(
       ownerId,
-      createManagerPicture,
+      createSellerPicture,
     );
   }
 

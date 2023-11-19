@@ -55,6 +55,11 @@ export class ManagerController {
   }
 
   //
+  @Get('allseller')
+  @UseGuards(SessionGuard)
+  getSellerProfiledetails(@Session() session) {
+    return this.managerService.getAllSellerdetails();
+  }
   //
 
   @Get('seeAllLandPost')
@@ -77,7 +82,7 @@ export class ManagerController {
     }
   }
 
-  @Get('buyLand/:landId')
+  @Get('selectland/:landId')
   findAllByOwnerId(@Param('landId') landId: number) {
     return this.managerService.findAllBylandId(landId);
   }
@@ -85,7 +90,7 @@ export class ManagerController {
   //
   //
   @Post('addProduct')
-  @UseGuards(SessionGuard)
+  // @UseGuards(SessionGuard)
   createProduct(@Body() product: CreateProductDto): Promise<Product> {
     return this.managerService.addProduct(product);
   }
@@ -111,9 +116,14 @@ export class ManagerController {
     return this.managerService.update(id, updateLandProfileDto);
   }
 
-  @Delete('deleteProduct:id')
+  @Delete('deleteProduct/:id')
   remove(@Param('id') id: number) {
-    return this.managerService.removeProduct(id);
+    const delete1 = this.managerService.removeProduct(id);
+    if (delete1) {
+      return { message: 'Product deleted successfully' };
+    } else {
+      return { message: 'Product id not found' };
+    }
   }
 
   @Post('addCategory')
@@ -145,7 +155,7 @@ export class ManagerController {
 
   @Get('hello')
   getHello(): string {
-    return 'hello from admin';
+    return 'hello from Manager';
   }
   @Get('profile')
   @UseGuards(SessionGuard)

@@ -11,6 +11,7 @@ import { Manager } from './module/managerpersonal.entity';
 import { LandProfile } from 'src/LandOwner/module/addLand.entity';
 import { Category } from 'src/Products/module/category.entity';
 import { Product } from 'src/Products/module/product.entity';
+import { SellerProfile } from 'src/Seller/module/seller.entity';
 import { LandController } from './Controllers/addLand.controller';
 import { AddLand } from './module/addLand.entity';
 import { LandService } from './services/addLand.service';
@@ -29,6 +30,7 @@ import { ManagerPictureService } from './services/managerPicture.service';
       Category,
       AddLand,
       LandProfile,
+      SellerProfile,
     ]),
   ],
   providers: [ManagerService, LandService, ManagerPictureService],

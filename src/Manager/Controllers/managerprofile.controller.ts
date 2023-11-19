@@ -30,7 +30,7 @@ import { Manager } from '../module/managerpersonal.entity';
 export class ManagerProfileController {
   constructor(private readonly managerService: ManagerService) {}
 
-  @Post('add')
+  @Post('registration')
   async createManagerWithProfile(
     @Body() data: { manager: Manager; managerProfile: ManagerProfile },
   ) {
@@ -70,10 +70,7 @@ export class ManagerProfileController {
   @Get('profiledetails')
   @UseGuards(SessionGuard)
   getProfile(@Session() session) {
-    console.log(session.email);
-    console.log('Reached the getProfile route');
-    console.log('Session email:', session.email);
-    return this.managerService.getProfile();
+    return this.managerService.getAllSellerdetails();
   }
 
   @Put('update/:id') // Use a PUT request to update a profile by its ID

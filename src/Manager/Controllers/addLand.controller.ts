@@ -44,7 +44,12 @@ export class LandController {
 
   @Delete(':id')
   remove(@Param('id') id: number) {
-    return this.landProfileService.remove(id);
+    const delete1 = this.landProfileService.remove(id);
+    if (delete1) {
+      return { message: 'land deleted successfully' };
+    } else {
+      return { message: 'land id not found' };
+    }
   }
 
   //   constructor(private readonly landService: LandService) {}

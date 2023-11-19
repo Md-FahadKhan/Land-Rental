@@ -27,39 +27,8 @@ export class SellerService {
     private categoryRepository: Repository<Category>,
     @InjectRepository(Product)
     private productRepository: Repository<Product>,
-  ) {
-    // this.transporter = nodemailer.createTransport({
-    //   service: 'gmail',
-    //   auth: {
-    //     user: 'mdfahadkhan01701@gmail.com', // replace with your email
-    //     pass: 'arkd nbjc fpsp lsrk', // replace with your email password or use app-specific password
-    //   },
-    // });
-  }
-  // Add product
+  ) {}
 
-  // async sendEmail(to: string, subject: string, text: string) {
-  //   const mailOptions = {
-  //     from: 'mdfahadkhan01701@gmail.com',
-  //     to,
-  //     subject,
-  //     text,
-  //   };
-
-  //   try {
-  //     await this.transporter.sendMail(mailOptions);
-  //     console.log('Email sent successfully');
-  //   } catch (error) {
-  //     console.error('Error sending email:', error);
-  //     throw new HttpException(
-  //       'Failed to send email',
-  //       HttpStatus.INTERNAL_SERVER_ERROR,
-  //     );
-  //   }
-  // }
-  // //
-
-  //
   addProduct(productInfo: CreateProductDto) {
     return this.productRepository.save(productInfo);
   }

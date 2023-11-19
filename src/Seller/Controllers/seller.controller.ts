@@ -29,26 +29,6 @@ interface Category {
 export class SellerController {
   constructor(private readonly sellerService: SellerService) {}
 
-  ///
-  //
-
-  //   @Post('sendEmail')
-  //   async sendEmail(
-  //     @Body() emailData: { to: string; subject: string; text: string },
-  //   ): Promise<any> {
-  //     try {
-  //       await this.sellerService.sendEmail(
-  //         emailData.to,
-  //         emailData.subject,
-  //         emailData.text,
-  //       );
-
-  //       return { success: true, message: 'Email sent successfully' };
-  //     } catch (error) {
-  //       return { success: false, message: 'Failed to send email' };
-  //     }
-  //   }
-
   @Post('addProduct')
   @UseGuards(SessionGuard)
   createProduct(@Body() product: CreateProductDto): Promise<Product> {
