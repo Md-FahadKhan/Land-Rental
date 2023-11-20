@@ -4,6 +4,7 @@ import { AddLand } from 'src/Manager/module/addLand.entity';
 import { Category } from 'src/Products/module/category.entity';
 import { Product } from 'src/Products/module/product.entity';
 import { SellerController } from './Controllers/seller.controller';
+import { SellerPictureController } from './Controllers/sellerPicture.controller';
 import { SellerProfileController } from './Controllers/sellerProfile.controller';
 import { SellerProfile } from './module/seller.entity';
 import { Seller } from './module/sellerpersonal.entity';
@@ -30,7 +31,11 @@ import { SellerPictureService } from './services/sellerPicture.service';
     ]),
   ],
   providers: [SellerService, SellerPictureService],
-  controllers: [SellerProfileController, SellerController, SellerController],
+  controllers: [
+    SellerProfileController,
+    SellerController,
+    SellerPictureController,
+  ],
   exports: [SellerService],
 })
 export class SellerModule {}

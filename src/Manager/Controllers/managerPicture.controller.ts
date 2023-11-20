@@ -33,7 +33,7 @@ export class ManagerPictureController {
       },
       limits: { fileSize: 30000 },
       storage: diskStorage({
-        destination: './Landpicture',
+        destination: './Managerpicture',
         filename: function (req, file, cb) {
           cb(null, Date.now() + file.originalname);
         },

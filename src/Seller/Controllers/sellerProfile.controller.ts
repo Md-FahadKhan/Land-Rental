@@ -59,7 +59,7 @@ export class SellerProfileController {
 
   @Get('hello')
   getHello(): string {
-    return 'hello from admin';
+    return 'hello from Seller';
   }
 
   @Get('index')

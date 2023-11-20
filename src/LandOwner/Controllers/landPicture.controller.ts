@@ -17,7 +17,7 @@ import { LandOwnerPicture } from '../module/landOwnerPicture.entity';
 import { LandOwnerPictureService } from '../services/LandOwnerPicture.service';
 // import { LandOwnerPictureService } from '../services/LandPicture.service';
 
-@Controller('landpicture')
+@Controller('landowner')
 export class LandOwnerPictureController {
   // only for testing
   constructor(

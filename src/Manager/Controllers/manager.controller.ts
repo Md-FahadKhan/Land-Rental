@@ -62,7 +62,7 @@ export class ManagerController {
   }
   //
 
-  @Get('seeAllLandPost')
+  @Get('seeAllLandOwnerPost')
   async getAllLand(): Promise<{
     success: boolean;
     message?: string;
@@ -103,9 +103,22 @@ export class ManagerController {
       return { success: false };
     }
   }
+  @Get('getAllCategory')
+  async getAllCategory(): Promise<{ success: boolean; data?: Category[] }> {
+    try {
+      const category = await this.managerService.getAllCategory();
+      return { success: true, data: category };
+    } catch (error) {
+      return { success: false };
+    }
+  }
   @Get('singleProduct/:id')
   findOne(@Param('id') id: number) {
     return this.managerService.findOneById(id);
+  }
+  @Get('singleCategory/:id')
+  findOneCategory(@Param('id') id: number) {
+    return this.managerService.findOneByIdCategory(id);
   }
 
   @Put('updateProduct/:id')
@@ -123,6 +136,15 @@ export class ManagerController {
       return { message: 'Product deleted successfully' };
     } else {
       return { message: 'Product id not found' };
+    }
+  }
+  @Delete('deleteProduct/:id')
+  removeCategory(@Param('id') id: number) {
+    const delete1 = this.managerService.removeCategory(id);
+    if (delete1) {
+      return { message: 'Category deleted successfully' };
+    } else {
+      return { message: 'Category id not found' };
     }
   }
 
@@ -152,10 +174,12 @@ export class ManagerController {
   //
   //
   //
-
-  @Get('hello')
-  getHello(): string {
-    return 'hello from Manager';
+  @UseGuards(SessionGuard)
+  @Get('hellomanager')
+  getHello(@Session() session): Record<string, any> {
+    return {
+      user: 'Welcome ' + session.email, // This includes the user details in the response
+    };
   }
   @Get('profile')
   @UseGuards(SessionGuard)

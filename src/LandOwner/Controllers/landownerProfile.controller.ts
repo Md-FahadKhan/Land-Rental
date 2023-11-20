@@ -28,41 +28,7 @@ import { LandownerService } from '../services/landowner.service';
 export class LandownerProfileController {
   constructor(private readonly landownerService: LandownerService) {}
 
-  //this is for create a user controller
-  //
-  // @Post('add')
-  // async createLandownerWithProfile(
-  //   @Body() data: { landowner: Landowner; landownerProfile: LandownerProfile },
-  // ) {
-  //   // try {
-
-  //   const { landowner, landownerProfile } = data;
-
-  //   console.log('Received data:', data);
-  //   console.log(landowner);
-  //   console.log(landownerProfile);
-  //   const createdUserProfile =
-  //     await this.landownerService.createlandowerProfile(landownerProfile);
-  //   const result = await this.landownerService.createLandowner(
-  //     landowner,
-  //     createdUserProfile,
-  //   );
-
-  //   return {
-  //     success: true,
-  //     message: 'Landowner and LandownerProfile created successfully',
-  //     data: result,
-  //   };
-  //   // } catch (error) {
-  //   //   return {
-  //   //     success: false,
-  //   //     message: 'Landowner and LandownerProfile creation failed',
-  //   //     error: error.message,
-  //   //   };
-  //   //}
-  // }
-
-  @Post('add')
+  @Post('Registration')
   async createLandownerWithProfile(
     @Body() data: { landowner: Landowner; landownerProfile: LandownerProfile },
   ) {

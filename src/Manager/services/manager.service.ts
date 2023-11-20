@@ -84,8 +84,14 @@ export class ManagerService {
   getAllProduct(): Promise<Product[]> {
     return this.productRepository.find();
   }
+  getAllCategory(): Promise<Category[]> {
+    return this.categoryRepository.find();
+  }
   async findOneById(id: number): Promise<Product> {
     return this.productRepository.findOne({ where: { productId: id } });
+  }
+  async findOneByIdCategory(id: number): Promise<Category> {
+    return this.categoryRepository.findOne({ where: { categoryId: id } });
   }
 
   async update(
@@ -95,12 +101,22 @@ export class ManagerService {
     await this.productRepository.update(id, updateLandProfileDto);
     return this.findOneById(id);
   }
+  async updateCategory(
+    id: number,
+    updateLandProfileDto: Partial<Category>,
+  ): Promise<Category> {
+    await this.categoryRepository.update(id, updateLandProfileDto);
+    return this.findOneByIdCategory(id);
+  }
 
   async removeProduct(id: number): Promise<void> {
     await this.productRepository.delete(id);
   }
   addCategory(categoryInfo: CreateCategoryDto) {
     return this.categoryRepository.save(categoryInfo);
+  }
+  async removeCategory(id: number): Promise<void> {
+    await this.categoryRepository.delete(id);
   }
 
   async addProductToCategory(

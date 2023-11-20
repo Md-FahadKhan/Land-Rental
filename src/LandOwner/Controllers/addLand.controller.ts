@@ -20,7 +20,7 @@ import { LandProfile } from '../module/addLand.entity';
 
 import { LandService } from './../services/addLand.service';
 
-@Controller('land')
+@Controller('landowner')
 export class LandController {
   // only for testing
   constructor(private readonly landProfileService: LandService) {}
