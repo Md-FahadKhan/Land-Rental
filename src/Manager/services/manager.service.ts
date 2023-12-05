@@ -18,6 +18,8 @@ import { Manager } from '../module/managerpersonal.entity';
 // import { Product } from '../module/product.entity';
 import * as nodemailer from 'nodemailer';
 import { SellerProfile } from 'src/Seller/module/seller.entity';
+import { ManagerE } from '../module/manager.entity';
+import { CreateAdminDto } from '../dtos/manager.dto';
 @Injectable()
 export class ManagerService {
   private transporter;
@@ -36,6 +38,8 @@ export class ManagerService {
     private landProfileRepository: Repository<LandProfile>,
     @InjectRepository(SellerProfile)
     private sellerProfileRepository: Repository<SellerProfile>,
+    @InjectRepository(ManagerE)
+    private adminRepository: Repository<ManagerE>,
   ) {
     this.transporter = nodemailer.createTransport({
       service: 'gmail',
@@ -46,6 +50,17 @@ export class ManagerService {
     });
   }
   // Add product
+  async createAdmin(admin: ManagerE): Promise<ManagerE> {
+    const password = admin.password;
+    const confirmPassword = admin.confirmPassword;
+    const salt = await bcrypt.genSalt();
+    const hashedPassword = await bcrypt.hash(password, salt);
+    const hashedconfirmPassword = await bcrypt.hash(confirmPassword, salt);
+    admin.confirmPassword = hashedconfirmPassword;
+    admin.password = hashedPassword;
+    const a = await this.adminRepository.save(admin);
+    return a;
+  }
 
   async sendEmail(to: string, subject: string, text: string) {
     const mailOptions = {
@@ -239,16 +254,16 @@ export class ManagerService {
   //   async addProductToCategory(
 
   async login(
-    createManagerProfileDto: CreateManagerProfileDto,
-  ): Promise<ManagerProfile | null> {
-    const user = await this.managerProfileRepository.findOne({
-      where: { managerusername: createManagerProfileDto.managerusername },
+    createManagerProfileDto: CreateAdminDto,
+  ): Promise<ManagerE | null> {
+    const user = await this.adminRepository.findOne({
+      where: { email: createManagerProfileDto.email },
     });
 
     if (user) {
       const isPasswordValid = await bcrypt.compare(
-        createManagerProfileDto.managerpassword,
-        user.managerpassword,
+        createManagerProfileDto.password as string,
+        user.password as string,
       );
 
       if (isPasswordValid) {

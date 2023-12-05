@@ -22,6 +22,8 @@ import { CreateManagerProfileDto } from '../dtos/create-manager.dto';
 import { SessionGuard } from '../manager.gaurds';
 // import { ManagerService } from '../services/manager.service';
 import { LandProfile } from 'src/LandOwner/module/addLand.entity';
+import { CreateAdminDto } from '../dtos/manager.dto';
+import { ManagerE } from '../module/manager.entity';
 
 // import { CreateCategoryDto } from '../dtos/Create_Category_dto';
 // import { Product } from '../module/product.entity';
@@ -35,6 +37,34 @@ export class ManagerController {
   constructor(private readonly managerService: ManagerService) {}
 
   ///
+
+  @Post('add')
+  // @UsePipes(new ValidationPipe())
+  // @UseInterceptors(
+  //   FileInterceptor('profilepic', {
+  //     fileFilter: (req, file, cb) => {
+  //       if (file.originalname.match(/^.*\.(jpg|webp|png|jpeg)$/))
+  //         cb(null, true);
+  //       else {
+  //         cb(new MulterError('LIMIT_UNEXPECTED_FILE', 'image'), false);
+  //       }
+  //     },
+  //     limits: { fileSize: 30000 },
+  //     storage: diskStorage({
+  //       destination: './upload',
+  //       filename: function (req, file, cb) {
+  //         cb(null, Date.now() + file.originalname);
+  //       },
+  //     }),
+  //   }),
+  // )
+  addManager(
+    @Body() createAdminDto: CreateAdminDto,
+    // @UploadedFile() file: Express.Multer.File,
+  ): Promise<ManagerE> {
+    // createAdminDto.filename = file.filename;
+    return this.managerService.createAdmin(createAdminDto);
+  }
   //
 
   @Post('sendEmail')
@@ -150,8 +180,13 @@ export class ManagerController {
 
   @Post('addCategory')
   createCategory(@Body() category: CreateCategoryDto): Promise<Category> {
+    console.log('Received category:', category);
     return this.managerService.addCategory(category);
   }
+  
+  
+
+  
 
   @Post('productcategory')
   async addProductToCategory(
@@ -205,24 +240,25 @@ export class ManagerController {
     console.log(session.email);
     return this.managerService.getAll();
   }
-  @Post('login')
-  async login(
-    @Body() createManagerProfileDto: CreateManagerProfileDto,
-    @Session() session,
-  ) {
-    const user = await this.managerService.login(createManagerProfileDto);
 
-    if (user) {
-      session.email = createManagerProfileDto.managerusername; // Set the email in the session
+  // @Post('login')
+  // async login(
+  //   @Body() createManagerProfileDto: CreateManagerProfileDto,
+  //   @Session() session,
+  // ) {
+  //   const user = await this.managerService.login(createManagerProfileDto);
 
-      return {
-        success: true,
-        message: 'Login successful',
-        user: user, // This includes the user details in the response
-      };
-    } else {
-      console.log('Unauthorized login attempt');
-      throw new HttpException('UnauthorizedException', HttpStatus.UNAUTHORIZED);
-    }
-  }
+  //   if (user) {
+  //     session.email = createManagerProfileDto.managerusername; // Set the email in the session
+
+  //     return {
+  //       success: true,
+  //       message: 'Login successful',
+  //       user: user, // This includes the user details in the response
+  //     };
+  //   } else {
+  //     console.log('Unauthorized login attempt');
+  //     throw new HttpException('UnauthorizedException', HttpStatus.UNAUTHORIZED);
+  //   }
+  // }
 }

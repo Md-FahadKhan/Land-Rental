@@ -19,6 +19,9 @@ export class Product {
   @Column()
   name: string;
 
+  @Column()
+  price: string;
+
   @ManyToOne(() => Manager, (manager) => manager.prodcuts)
   manager: Manager;
   @ManyToOne(() => Seller, (seller) => seller.prodcuts)

@@ -25,6 +25,7 @@ import { ManagerPicture } from '../module/managerPicture.entity';
 import { CreateManagerPictureDto } from '../dtos/managerPicture.dto';
 import { SessionGuard } from '../manager.gaurds';
 import { Manager } from '../module/managerpersonal.entity';
+import { CreateAdminDto } from '../dtos/manager.dto';
 
 @Controller('manager')
 export class ManagerProfileController {
@@ -34,6 +35,8 @@ export class ManagerProfileController {
   async createManagerWithProfile(
     @Body() data: { manager: Manager; managerProfile: ManagerProfile },
   ) {
+    console.log('Received data:', data);
+  
     try {
       const { manager, managerProfile } = data;
 
@@ -94,15 +97,16 @@ export class ManagerProfileController {
     }
   }
 
+  // main login part
   @Post('login')
   async login(
-    @Body() createManagerProfileDto: CreateManagerProfileDto,
+    @Body() createManager: CreateAdminDto,
     @Session() session,
   ) {
-    const user = await this.managerService.login(createManagerProfileDto);
+    const user = await this.managerService.login(createManager);
 
     if (user) {
-      session.email = createManagerProfileDto.managerusername;
+      session.email = createManager.email;
       return true;
     } else {
       console.log('Unauthorized login attempt');

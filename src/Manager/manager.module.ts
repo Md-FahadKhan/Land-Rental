@@ -17,6 +17,7 @@ import { AddLand } from './module/addLand.entity';
 import { LandService } from './services/addLand.service';
 import { ManagerService } from './services/manager.service';
 import { ManagerPictureService } from './services/managerPicture.service';
+import { ManagerE } from './module/manager.entity';
 
 // Import the repository
 
@@ -31,6 +32,7 @@ import { ManagerPictureService } from './services/managerPicture.service';
       AddLand,
       LandProfile,
       SellerProfile,
+      ManagerE,
     ]),
   ],
   providers: [ManagerService, LandService, ManagerPictureService],

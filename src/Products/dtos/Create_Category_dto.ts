@@ -1,4 +1,5 @@
 export class CreateCategoryDto {
-  categoryId: number;
   name: string;
+  price: string;
+
 }
