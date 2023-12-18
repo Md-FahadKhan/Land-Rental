@@ -13,21 +13,31 @@ export class LandService {
   ) {}
 
   async create(
-    ownerId: number,
-    createLandProfileDto: AddLandDto,
+    createLandProfile: AddLand,
   ): Promise<AddLand> {
-    const landProfile = this.addLandRepository.create({
-      ...createLandProfileDto,
-      manager: { id: ownerId },
-    });
-    return await this.addLandRepository.save(landProfile);
+    const landProfile = this.addLandRepository.save(createLandProfile);
+    return landProfile;
   }
 
-  async findAllByOwnerId(ownerId: number): Promise<AddLand[]> {
-    return this.addLandRepository.find({
-      where: { manager: { id: ownerId } },
-    });
+  // async create(
+  //   ownerId: number,
+  //   createLandProfileDto: AddLandDto,
+  // ): Promise<AddLand> {
+  //   const landProfile = this.addLandRepository.create({
+  //     ...createLandProfileDto,
+  //     manager: { id: ownerId },
+  //   });
+  //   return await this.addLandRepository.save(landProfile);
+  // }
+
+  async findAllByOwnerId(): Promise<AddLand[]> {
+    return this.addLandRepository.find();
   }
+  // async findAllByOwnerId(ownerId: number): Promise<AddLand[]> {
+  //   return this.addLandRepository.find({
+  //     where: { manager: { id: ownerId } },
+  //   });
+  // }
 
   async findOneById(id: number): Promise<AddLand> {
     return this.addLandRepository.findOne({ where: { landid: id } });

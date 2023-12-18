@@ -18,6 +18,9 @@ import { LandService } from './services/addLand.service';
 import { ManagerService } from './services/manager.service';
 import { ManagerPictureService } from './services/managerPicture.service';
 import { ManagerE } from './module/manager.entity';
+import { ChatController } from './Controllers/chat.controller';
+import { Message } from './module/message.entity';
+import { NotificationEntity } from './module/notification.entity';
 
 // Import the repository
 
@@ -33,6 +36,8 @@ import { ManagerE } from './module/manager.entity';
       LandProfile,
       SellerProfile,
       ManagerE,
+      Message,
+      NotificationEntity,
     ]),
   ],
   providers: [ManagerService, LandService, ManagerPictureService],
@@ -41,6 +46,7 @@ import { ManagerE } from './module/manager.entity';
     ManagerController,
     ManagerPictureController,
     LandController,
+    ChatController,
   ],
   exports: [ManagerService],
 })

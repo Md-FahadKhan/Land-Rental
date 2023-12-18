@@ -1,3 +1,4 @@
+import { SessionGuard } from './../../LandOwner/landowner.gaurds';
 import {
   Body,
   Controller,
@@ -10,8 +11,14 @@ import {
   Param,
   Post,
   Put,
+  Res,
   Session,
+  UploadedFile,
   UseGuards,
+  UseInterceptors,
+  UsePipes,
+  ValidationPipe,
+  
 } from '@nestjs/common';
 import { ManagerService } from 'src/Manager/services/manager.service';
 // import { CreateProductDto } from '../dtos/Create_Product_dto';
@@ -19,11 +26,15 @@ import { CreateCategoryDto } from 'src/Products/dtos/Create_Category_dto';
 import { CreateProductDto } from 'src/Products/dtos/Create_Product_dto';
 import { Product } from 'src/Products/module/product.entity';
 import { CreateManagerProfileDto } from '../dtos/create-manager.dto';
-import { SessionGuard } from '../manager.gaurds';
+
 // import { ManagerService } from '../services/manager.service';
 import { LandProfile } from 'src/LandOwner/module/addLand.entity';
-import { CreateAdminDto } from '../dtos/manager.dto';
+// import { CreateAdminDto } from '../dtos/manager.dto';
 import { ManagerE } from '../module/manager.entity';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { MulterError, diskStorage } from 'multer';
+import { join } from 'path';
+import { NotificationEntity } from '../module/notification.entity';
 
 // import { CreateCategoryDto } from '../dtos/Create_Category_dto';
 // import { Product } from '../module/product.entity';
@@ -37,34 +48,109 @@ export class ManagerController {
   constructor(private readonly managerService: ManagerService) {}
 
   ///
+  // @Get('/viewProfilePicture')
+  // getImages(@Res() res) {
+  //   return this.managerService.getImages(res);
+  // }
+  
+
+  @Get('/getimage/:name')
+ getImages(@Param('name') name:string, @Res() res) {
+ res.sendFile(name,{ root: './upload' })
+ }
+
+ @Get('/getproductimage/:name')
+ getProductImages(@Param('name') name:string, @Res() res) {
+ res.sendFile(name,{ root: './ProductImages' })
+ }
+ 
+
 
   @Post('add')
-  // @UsePipes(new ValidationPipe())
-  // @UseInterceptors(
-  //   FileInterceptor('profilepic', {
-  //     fileFilter: (req, file, cb) => {
-  //       if (file.originalname.match(/^.*\.(jpg|webp|png|jpeg)$/))
-  //         cb(null, true);
-  //       else {
-  //         cb(new MulterError('LIMIT_UNEXPECTED_FILE', 'image'), false);
-  //       }
-  //     },
-  //     limits: { fileSize: 30000 },
-  //     storage: diskStorage({
-  //       destination: './upload',
-  //       filename: function (req, file, cb) {
-  //         cb(null, Date.now() + file.originalname);
-  //       },
-  //     }),
-  //   }),
-  // )
-  addManager(
-    @Body() createAdminDto: CreateAdminDto,
-    // @UploadedFile() file: Express.Multer.File,
-  ): Promise<ManagerE> {
-    // createAdminDto.filename = file.filename;
-    return this.managerService.createAdmin(createAdminDto);
+@UsePipes(new ValidationPipe())
+@UseInterceptors(
+  FileInterceptor('profilepic', {
+    fileFilter: (req, file, cb) => {
+      if (file.originalname.match(/^.*\.(jpg|webp|png|jpeg)$/))
+        cb(null, true);
+      else {
+        cb(new MulterError('LIMIT_UNEXPECTED_FILE', 'image'), false);
+      }
+    },
+    limits: { fileSize: 30000 },
+    storage: diskStorage({
+      destination: './ManagerProfilePicture',
+      filename: function (req, file, cb) {
+        cb(null, Date.now() + file.originalname);
+      },
+    }),
+  }),
+)
+async addManager(
+  @Body() createAdminDto: ManagerE,
+  @UploadedFile() file: Express.Multer.File,
+): Promise<ManagerE> {
+  // Check if a file was uploaded
+  
+  if (file) {
+    createAdminDto.profilePic = file.filename;
+  } else {
+    // If no file was uploaded, set a default profile picture filename
+    createAdminDto.profilePic = 'pic.jpg';
   }
+
+  return this.managerService.createAdmin(createAdminDto);
+}
+
+ @Get('/notification')
+ 
+  viewNotification(): Promise<NotificationEntity[]> {
+    return this.managerService.viewNotification();
+  }
+
+  @Delete('deleteNotification/:id')
+  removeNoti(@Param('id') Serial: number) {
+    const delete1 = this.managerService.removeNotification(Serial);
+    if (delete1) {
+      return { message: 'Notification deleted successfully' };
+    } else {
+      return { message: 'Notification id not found' };
+    }
+  }
+//  @Get('/notification')
+//  @UseGuards(SessionGuard)
+//   viewNotification(@Session() session): Promise<NotificationEntity[]> {
+//     return this.managerService.viewNotification(session.email);
+//   }
+// @Put('/changePicture')
+// @UseGuards(SessionGuard)
+// @UseInterceptors(
+//   FileInterceptor('profilepic', {
+//     fileFilter: (req, file, cb) => {
+//       if (file.originalname.match(/^.*\.(jpg|webp|png|jpeg)$/)) {
+//         cb(null, true);
+//       } else {
+//         cb(new Error('LIMIT_UNEXPECTED_FILE'), false);
+//       }
+//     },
+//     limits: { fileSize: 300000 },
+//     storage: diskStorage({
+//       destination: './ManagerProfilePicture',
+//       filename: (req, file, cb) => {
+//         const fileName = Date.now() + file.originalname;
+//         cb(null, fileName);
+//       },
+//     }),
+//   }),
+// )
+// async changePicture(
+//   @UploadedFile() file: Express.Multer.File,
+//   @Session() session,
+// ): Promise<string> {
+//   const fileName = file.filename;
+//   return await this.managerService.changePicture(session.email, fileName);
+// }
+
   //
 
   @Post('sendEmail')
@@ -86,7 +172,7 @@ export class ManagerController {
 
   //
   @Get('allseller')
-  @UseGuards(SessionGuard)
+  // @UseGuards(SessionGuard)
   getSellerProfiledetails(@Session() session) {
     return this.managerService.getAllSellerdetails();
   }
@@ -116,12 +202,37 @@ export class ManagerController {
   findAllByOwnerId(@Param('landId') landId: number) {
     return this.managerService.findAllBylandId(landId);
   }
-
   //
   //
-  @Post('addProduct')
-  // @UseGuards(SessionGuard)
-  createProduct(@Body() product: CreateProductDto): Promise<Product> {
+@Post('addProduct')
+  // @UseGuards(SessionGuard)UsePipes(new ValidationPipe())
+@UseInterceptors(
+  FileInterceptor('picture', {
+    fileFilter: (req, file, cb) => {
+      if (file.originalname.match(/^.*\.(jpg|webp|png|jpeg)$/))
+        cb(null, true);
+      else {
+        cb(new MulterError('LIMIT_UNEXPECTED_FILE', 'image'), false);
+      }
+    },
+    limits: { fileSize: 30000 },
+    storage: diskStorage({
+      destination: './ProductImages',
+      filename: function (req, file, cb) {
+        cb(null, Date.now() + file.originalname);
+      },
+    }),
+  }),
+)
+  createProduct(@Body() product: Product,
+  @UploadedFile() file: Express.Multer.File,
+  ): Promise<Product> {
+    if (file) {
+      product.picture = file.filename;
+    } else {
+      // If no file was uploaded, set a default profile picture filename
+      product.picture = 'pic.jpg';
+    }
     return this.managerService.addProduct(product);
   }
   @Get('getAllProduct')

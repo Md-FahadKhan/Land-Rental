@@ -20,6 +20,8 @@ export class AddLand {
 
   @Column({ type: 'decimal', precision: 10, scale: 2, nullable: true }) // Add a price column
   price: number;
+  @Column()
+  picture: string;
 
   @ManyToOne(() => Manager, (manager) => manager.addlands)
   manager: Manager;

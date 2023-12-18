@@ -34,5 +34,7 @@ export class AddLandDto {
   @IsOptional()
   price: number;
 
+  picture:string;
+
   manager: Manager;
 }

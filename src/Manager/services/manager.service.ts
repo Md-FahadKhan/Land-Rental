@@ -1,6 +1,7 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import * as bcrypt from 'bcrypt';
+import { join } from 'path';
 import { Repository } from 'typeorm';
 // import { CreateCategoryDto } from '../dtos/Create_Category_dto';
 // import { CreateProductDto } from '../dtos/Create_Product_dto';
@@ -19,7 +20,9 @@ import { Manager } from '../module/managerpersonal.entity';
 import * as nodemailer from 'nodemailer';
 import { SellerProfile } from 'src/Seller/module/seller.entity';
 import { ManagerE } from '../module/manager.entity';
-import { CreateAdminDto } from '../dtos/manager.dto';
+// import { CreateAdminDto } from '../dtos/manager.dto';
+import { NotificationEntity } from '../module/notification.entity';
+import { CurrentDate, CurrentTime } from '../current.date';
 @Injectable()
 export class ManagerService {
   private transporter;
@@ -38,6 +41,9 @@ export class ManagerService {
     private landProfileRepository: Repository<LandProfile>,
     @InjectRepository(SellerProfile)
     private sellerProfileRepository: Repository<SellerProfile>,
+    @InjectRepository(NotificationEntity)
+    private notificationRepo: Repository<NotificationEntity>,
+
     @InjectRepository(ManagerE)
     private adminRepository: Repository<ManagerE>,
   ) {
@@ -50,6 +56,25 @@ export class ManagerService {
     });
   }
   // Add product
+
+  // async viewNotification(email: string): Promise<NotificationEntity[]> {
+  //   const manager = await this.adminRepository.findOne({ where: { email } })
+  
+  //   const notifications = await this.notificationRepo.find({
+  //     where: {
+  //       manager: manager,
+  //     },
+  //   });
+  
+  //   return notifications;
+  // }
+  async viewNotification(): Promise<NotificationEntity[]> {
+    
+  
+    const notifications = await this.notificationRepo.find();
+  
+    return notifications;
+  }
   async createAdmin(admin: ManagerE): Promise<ManagerE> {
     const password = admin.password;
     const confirmPassword = admin.confirmPassword;
@@ -59,6 +84,19 @@ export class ManagerService {
     admin.confirmPassword = hashedconfirmPassword;
     admin.password = hashedPassword;
     const a = await this.adminRepository.save(admin);
+
+
+    const notiFication: NotificationEntity = new NotificationEntity();
+      notiFication.manager = a; 
+      notiFication.Message = "Account Created Successfully";
+      const currentDate: CurrentDate = new CurrentDate();
+      const currentTime: CurrentTime = new CurrentTime();
+  
+      notiFication.date = currentDate.getCurrentDate();
+      notiFication.time = currentTime.getCurrentTime();
+      await this.notificationRepo.save(notiFication);
+
+
     return a;
   }
 
@@ -93,9 +131,28 @@ export class ManagerService {
     return this.landProfileRepository.find();
   }
   //
-  addProduct(productInfo: CreateProductDto) {
-    return this.productRepository.save(productInfo);
+  async addProduct(productInfo: Product): Promise<Product> {
+    try {
+      const savedProduct = await this.productRepository.save(productInfo);
+  
+      const noti: NotificationEntity = new NotificationEntity();
+      noti.product = savedProduct;
+      noti.Message = "1 Product Added";
+      const currentDate: CurrentDate = new CurrentDate();
+      const currentTime: CurrentTime = new CurrentTime();
+  
+      noti.date = currentDate.getCurrentDate();
+      noti.time = currentTime.getCurrentTime();
+  
+      await this.notificationRepo.save(noti);
+  
+      return savedProduct;
+    } catch (error) {
+      console.error("Error adding product and creating notification:", error);
+      throw new Error("Failed to add product and create notification");
+    }
   }
+  
   getAllProduct(): Promise<Product[]> {
     return this.productRepository.find();
   }
@@ -127,6 +184,10 @@ export class ManagerService {
   async removeProduct(id: number): Promise<void> {
     await this.productRepository.delete(id);
   }
+  async removeNotification(Serial: number): Promise<void> {
+    await this.notificationRepo.delete(Serial);
+  }
+
   addCategory(categoryInfo: CreateCategoryDto) {
     return this.categoryRepository.save(categoryInfo);
   }
@@ -206,9 +267,9 @@ export class ManagerService {
   //     },
   //   });
   // }
-  async getProfileByEmail(email: string): Promise<ManagerProfile | null> {
-    return this.managerProfileRepository.findOne({
-      where: { managerusername: email },
+  async getProfileByEmail(email: string): Promise<ManagerE | null> {
+    return this.adminRepository.findOne({
+      where: { email : email },
     });
   }
 
@@ -254,7 +315,7 @@ export class ManagerService {
   //   async addProductToCategory(
 
   async login(
-    createManagerProfileDto: CreateAdminDto,
+    createManagerProfileDto: ManagerE,
   ): Promise<ManagerE | null> {
     const user = await this.adminRepository.findOne({
       where: { email: createManagerProfileDto.email },
@@ -301,6 +362,31 @@ export class ManagerService {
 
   //   return updatedProfile;
   // }
+  // async getImages(res: any) {
+  //   try {
+  //     // Assuming the file name is known or can be constructed based on some logic
+  //     const fileName = 'pic.jpg'; // Replace with the actual file name
+  
+  //     const filePath = join(__dirname, '../../../upload/pic.jpg', fileName);
+  
+  //     res.sendFile(filePath, (err) => {
+  //       if (err) {
+  //         console.error('Error sending file:', err);
+  //         return res.status(404).send('Missing Profile Picture');
+  //       } else {
+  //         console.log('File sent successfully:', fileName);
+  //       }
+  //     });
+  //   } catch (error) {
+  //     console.error('Error retrieving profile picture:', error);
+  //     return res.status(500).send('Internal Server Error');
+  //   }
+  // }
+//   async getimagebyadminid(adminid: number): Promise<string> {
+//     const mydata: AdminDTO = await this.adminRepo.findOneBy({ id: adminid });
+//     console.log(mydata);
+//     return mydata.filenames;
+// }
 
   async addManagerPicture(
     createLandPictureDto: CreateManagerPictureDto,

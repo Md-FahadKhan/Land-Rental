@@ -25,7 +25,8 @@ import { ManagerPicture } from '../module/managerPicture.entity';
 import { CreateManagerPictureDto } from '../dtos/managerPicture.dto';
 import { SessionGuard } from '../manager.gaurds';
 import { Manager } from '../module/managerpersonal.entity';
-import { CreateAdminDto } from '../dtos/manager.dto';
+import { ManagerE } from '../module/manager.entity';
+// import { CreateAdminDto } from '../dtos/manager.dto';
 
 @Controller('manager')
 export class ManagerProfileController {
@@ -100,7 +101,7 @@ export class ManagerProfileController {
   // main login part
   @Post('login')
   async login(
-    @Body() createManager: CreateAdminDto,
+    @Body() createManager: ManagerE,
     @Session() session,
   ) {
     const user = await this.managerService.login(createManager);

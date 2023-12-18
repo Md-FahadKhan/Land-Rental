@@ -1,4 +1,5 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { NotificationEntity } from './notification.entity';
 
 @Entity()
 export class ManagerE {
@@ -20,6 +21,12 @@ export class ManagerE {
   dateOfBirth: string;
   @Column()
   phoneNumber: number;
+  @Column({ nullable: true })
+  profilePic: string;
+
+  @OneToMany(() => NotificationEntity, notification => notification.manager)
+  notification: NotificationEntity[];
+  
 
   //   @Column()
   //   filename: string;
