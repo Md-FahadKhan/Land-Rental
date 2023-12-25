@@ -55,6 +55,8 @@ export class ManagerService {
       },
     });
   }
+
+
   // Add product
 
   // async viewNotification(email: string): Promise<NotificationEntity[]> {
@@ -273,13 +275,24 @@ export class ManagerService {
     });
   }
 
+  // async changePicture(email: string, FileFullName: string): Promise<string> {
+  //   const manager = await this.adminRepository.findOne({ where: { email } });
+  //   console.log(FileFullName);
+  
+  //   await this.adminRepository.update({ profilePic: manager }, { File: FileFullName });
+  
+    
+  
+  //   return 'File uploaded successfully';
+  // }
+
   // here update the profile based on the id
   async updateProfile(
     id: number,
-    updatedProfile: ManagerProfile,
-  ): Promise<ManagerProfile | null> {
-    const existingProfile = await this.managerProfileRepository.findOne({
-      where: { managerid: id },
+    updatedProfile: ManagerE,
+  ): Promise<ManagerE | null> {
+    const existingProfile = await this.adminRepository.findOne({
+      where: { id: id },
     });
 
     if (!existingProfile) {
@@ -287,26 +300,27 @@ export class ManagerService {
     }
 
     // Update the properties of the existing profile with the new values
-    existingProfile.managername = updatedProfile.managername;
-    existingProfile.managertitle = updatedProfile.managertitle;
-    existingProfile.managerusername = updatedProfile.managerusername;
+    existingProfile.firstName = updatedProfile.firstName;
+    existingProfile.phoneNumber = updatedProfile.phoneNumber;
+    existingProfile.profilePic = updatedProfile.profilePic;
+    
 
     // Check if the password is updated
-    if (updatedProfile.managerpassword) {
-      const newPassword = updatedProfile.managerpassword;
+    // if (updatedProfile.managerpassword) {
+    //   const newPassword = updatedProfile.managerpassword;
 
-      // Generate a new salt and hash the password
-      const salt = await bcrypt.genSalt();
-      const hashedPassword = await bcrypt.hash(newPassword, salt);
+    //   // Generate a new salt and hash the password
+    //   const salt = await bcrypt.genSalt();
+    //   const hashedPassword = await bcrypt.hash(newPassword, salt);
 
-      // Update the password with the hashed password
-      existingProfile.managerpassword = hashedPassword;
-    }
+    //   // Update the password with the hashed password
+    //   existingProfile.managerpassword = hashedPassword;
+    // }
 
     // Update other properties as needed
 
     // Save the updated profile in the database
-    return await this.managerProfileRepository.save(existingProfile);
+    return await this.adminRepository.save(existingProfile);
   }
 
   getUserByID(id: number): Promise<ManagerProfile> {

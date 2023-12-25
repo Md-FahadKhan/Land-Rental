@@ -122,34 +122,6 @@ async addManager(
 //   viewNotification(@Session() session): Promise<NotificationEntity[]> {
 //     return this.managerService.viewNotification(session.email);
 //   }
-// @Put('/changePicture')
-// @UseGuards(SessionGuard)
-// @UseInterceptors(
-//   FileInterceptor('profilepic', {
-//     fileFilter: (req, file, cb) => {
-//       if (file.originalname.match(/^.*\.(jpg|webp|png|jpeg)$/)) {
-//         cb(null, true);
-//       } else {
-//         cb(new Error('LIMIT_UNEXPECTED_FILE'), false);
-//       }
-//     },
-//     limits: { fileSize: 300000 },
-//     storage: diskStorage({
-//       destination: './ManagerProfilePicture',
-//       filename: (req, file, cb) => {
-//         const fileName = Date.now() + file.originalname;
-//         cb(null, fileName);
-//       },
-//     }),
-//   }),
-// )
-// async changePicture(
-//   @UploadedFile() file: Express.Multer.File,
-//   @Session() session,
-// ): Promise<string> {
-//   const fileName = file.filename;
-//   return await this.managerService.changePicture(session.email, fileName);
-// }
 
   //
 
@@ -344,6 +316,60 @@ async addManager(
       throw new ForbiddenException('Forbidden resource');
     }
   }
+
+  @Put('update/:id') // Use a PUT request to update a profile by its ID
+  // @UseGuards(SessionGuard)
+  @UseInterceptors(
+    FileInterceptor('profilepic', {
+      fileFilter: (req, file, cb) => {
+        if (file.originalname.match(/^.*\.(jpg|webp|png|jpeg)$/)) {
+          cb(null, true);
+        } else {
+          cb(new Error('LIMIT_UNEXPECTED_FILE'), false);
+        }
+      },
+      limits: { fileSize: 300000 },
+      storage: diskStorage({
+        destination: './upload',
+        filename: (req, file, cb) => {
+          const fileName = Date.now() + file.originalname;
+          cb(null, fileName);
+        },
+      }),
+    }),
+  )
+  async updateProfile(
+    @Param('id') id: number,
+    @Body() updatedProfile: ManagerE,
+    @UploadedFile() file: Express.Multer.File,
+  ): Promise<{ success: boolean; message: string; data?: ManagerE }> { // Updated return type
+    try {
+      updatedProfile.profilePic = file.filename;
+      await this.managerService.updateProfile(id, updatedProfile);
+  
+      return { success: true, message: 'Profile updated successfully' };
+    } catch (error) {
+      return {
+        success: false,
+        message: 'Profile update failed',
+       
+      };
+    }
+  }
+
+ 
+  
+
+
+
+
+
+
+
+
+
+
+
 
   @Get('index')
   @UseGuards(SessionGuard)

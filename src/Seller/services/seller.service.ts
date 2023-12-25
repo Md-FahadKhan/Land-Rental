@@ -13,6 +13,7 @@ import { CreateSellerPictureDto } from '../dtos/sellerPicture.dto';
 import { SellerProfile } from '../module/seller.entity';
 import { Seller } from '../module/sellerpersonal.entity';
 import { SellerPicture } from '../module/sellerpicture.entity';
+import { SellerE } from '../module/sellerr.entity';
 @Injectable()
 export class SellerService {
   private transporter;
@@ -27,7 +28,34 @@ export class SellerService {
     private categoryRepository: Repository<Category>,
     @InjectRepository(Product)
     private productRepository: Repository<Product>,
+    @InjectRepository(SellerE)
+    private adminRepository: Repository<SellerE>,
   ) {}
+
+  async create(admin: SellerE): Promise<SellerE> {
+    const password = admin.password;
+    const confirmPassword = admin.confirmPassword;
+    const salt = await bcrypt.genSalt();
+    const hashedPassword = await bcrypt.hash(password, salt);
+    const hashedconfirmPassword = await bcrypt.hash(confirmPassword, salt);
+    admin.confirmPassword = hashedconfirmPassword;
+    admin.password = hashedPassword;
+    const a = await this.adminRepository.save(admin);
+
+
+    // const notiFication: NotificationEntity = new NotificationEntity();
+    //   notiFication.manager = a; 
+    //   notiFication.Message = "Account Created Successfully";
+    //   const currentDate: CurrentDate = new CurrentDate();
+    //   const currentTime: CurrentTime = new CurrentTime();
+  
+    //   notiFication.date = currentDate.getCurrentDate();
+    //   notiFication.time = currentTime.getCurrentTime();
+    //   await this.notificationRepo.save(notiFication);
+
+
+    return a;
+  }
 
   addProduct(productInfo: CreateProductDto) {
     return this.productRepository.save(productInfo);
@@ -165,17 +193,18 @@ export class SellerService {
   }
   //   async addProductToCategory(
 
+
   async login(
-    createSellerProfileDto: CreateSellerProfileDto,
-  ): Promise<SellerProfile | null> {
-    const user = await this.sellerProfileRepository.findOne({
-      where: { sellerusername: createSellerProfileDto.sellerusername },
+    createManagerProfileDto: SellerE,
+  ): Promise<SellerE | null> {
+    const user = await this.adminRepository.findOne({
+      where: { email: createManagerProfileDto.email },
     });
 
     if (user) {
       const isPasswordValid = await bcrypt.compare(
-        createSellerProfileDto.sellerpassword,
-        user.sellerpassword,
+        createManagerProfileDto.password as string,
+        user.password as string,
       );
 
       if (isPasswordValid) {
@@ -187,6 +216,30 @@ export class SellerService {
     console.log('Login failed. User not found or invalid password.');
     return null;
   }
+
+
+  // async login(
+  //   createSellerProfileDto: CreateSellerProfileDto,
+  // ): Promise<SellerProfile | null> {
+  //   const user = await this.sellerProfileRepository.findOne({
+  //     where: { sellerusername: createSellerProfileDto.sellerusername },
+  //   });
+
+  //   if (user) {
+  //     const isPasswordValid = await bcrypt.compare(
+  //       createSellerProfileDto.sellerpassword,
+  //       user.sellerpassword,
+  //     );
+
+  //     if (isPasswordValid) {
+  //       console.log('Login successful');
+  //       return user;
+  //     }
+  //   }
+
+  //   console.log('Login failed. User not found or invalid password.');
+  //   return null;
+  // }
 
   async getAllSeller(): Promise<SellerProfile[]> {
     return this.sellerProfileRepository.find();

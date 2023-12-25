@@ -96,21 +96,21 @@ export class SellerProfileController {
     }
   }
 
-  @Post('login')
-  async login(
-    @Body() createSellerProfileDto: CreateSellerProfileDto,
-    @Session() session,
-  ) {
-    const user = await this.sellerService.login(createSellerProfileDto);
+  // @Post('login')
+  // async login(
+  //   @Body() createSellerProfileDto: CreateSellerProfileDto,
+  //   @Session() session,
+  // ) {
+  //   const user = await this.sellerService.login(createSellerProfileDto);
 
-    if (user) {
-      session.email = createSellerProfileDto.sellerusername;
-      return true;
-    } else {
-      console.log('Unauthorized login attempt');
-      throw new HttpException('UnauthorizedException', HttpStatus.UNAUTHORIZED);
-    }
-  }
+  //   if (user) {
+  //     session.email = createSellerProfileDto.sellerusername;
+  //     return true;
+  //   } else {
+  //     console.log('Unauthorized login attempt');
+  //     throw new HttpException('UnauthorizedException', HttpStatus.UNAUTHORIZED);
+  //   }
+  // }
 
   @Post('picture')
   @UsePipes(new ValidationPipe())

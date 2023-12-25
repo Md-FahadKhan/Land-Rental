@@ -1,6 +1,4 @@
 import { ManagerE } from "../module/manager.entity";
-
-
 export class CreateManagerDto {
   id: number;
   firstName: string;

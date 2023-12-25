@@ -77,26 +77,7 @@ export class ManagerProfileController {
     return this.managerService.getAllSellerdetails();
   }
 
-  @Put('update/:id') // Use a PUT request to update a profile by its ID
-  @UseGuards(SessionGuard)
-  async updateProfile(
-    @Param('id') id: number,
-    @Body() updatedProfile: ManagerProfile,
-  ) {
-    try {
-      const result = await this.managerService.updateProfile(
-        id,
-        updatedProfile,
-      );
-      return { success: true, message: 'Profile updated successfully' };
-    } catch (error) {
-      return {
-        success: false,
-        message: 'Profile update failed',
-        error: error.message,
-      };
-    }
-  }
+ 
 
   // main login part
   @Post('login')

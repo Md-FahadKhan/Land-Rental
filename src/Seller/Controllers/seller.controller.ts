@@ -11,7 +11,11 @@ import {
   Post,
   Put,
   Session,
+  UploadedFile,
   UseGuards,
+  UseInterceptors,
+  UsePipes,
+  ValidationPipe,
 } from '@nestjs/common';
 import { SellerService } from 'src/Seller/services/seller.service';
 // import { CreateProductDto } from '../dtos/Create_Product_dto';
@@ -20,6 +24,10 @@ import { CreateProductDto } from 'src/Products/dtos/Create_Product_dto';
 import { Product } from 'src/Products/module/product.entity';
 import { SessionGuard } from '../seller.guards';
 import { CreateSellerProfileDto } from '../dtos/create-seller.dto';
+import { SellerE } from '../module/sellerr.entity';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { MulterError, diskStorage } from 'multer';
+import { CreateSellerDto } from "../dtos/Seller.dto"
 
 interface Category {
   categoryId: number;
@@ -28,6 +36,42 @@ interface Category {
 @Controller('seller')
 export class SellerController {
   constructor(private readonly sellerService: SellerService) {}
+
+  @Post('addseller')
+  @UsePipes(new ValidationPipe())
+  @UseInterceptors(
+    FileInterceptor('profilepic', {
+      fileFilter: (req, file, cb) => {
+        if (file.originalname.match(/^.*\.(jpg|webp|png|jpeg)$/))
+          cb(null, true);
+        else {
+          cb(new MulterError('LIMIT_UNEXPECTED_FILE', 'image'), false);
+        }
+      },
+      limits: { fileSize: 30000 },
+      storage: diskStorage({
+        destination: './SellerProfilePicture',
+        filename: function (req, file, cb) {
+          cb(null, Date.now() + file.originalname);
+        },
+      }),
+    }),
+  )
+  async addSeller(
+    @Body() createAdminDto: SellerE,
+    @UploadedFile() file: Express.Multer.File,
+  ): Promise<SellerE> {
+    // Check if a file was uploaded
+    
+    if (file) {
+      createAdminDto.profilePic = file.filename;
+    } else {
+      // If no file was uploaded, set a default profile picture filename
+      createAdminDto.profilePic = 'pic.jpg';
+    }
+  
+    return this.sellerService.create(createAdminDto);
+  }
 
   @Post('addProduct')
   @UseGuards(SessionGuard)
@@ -108,30 +152,46 @@ export class SellerController {
     }
   }
 
+  @Post('loginseller')
+  async login(
+    @Body() CreateSellerDto: SellerE,
+    @Session() session,
+  ) {
+    const user = await this.sellerService.login(CreateSellerDto);
+
+    if (user) {
+      session.email = CreateSellerDto.email;
+      return true;
+    } else {
+      console.log('Unauthorized login attempt');
+      throw new HttpException('UnauthorizedException', HttpStatus.UNAUTHORIZED);
+    }
+  }
+
   @Get('index')
   @UseGuards(SessionGuard)
   getIndex(@Session() session) {
     console.log(session.email);
     return this.sellerService.getAll();
   }
-  @Post('login')
-  async login(
-    @Body() createSellerProfileDto: CreateSellerProfileDto,
-    @Session() session,
-  ) {
-    const user = await this.sellerService.login(createSellerProfileDto);
+  // @Post('login')
+  // async login(
+  //   @Body() createSellerProfileDto: CreateSellerProfileDto,
+  //   @Session() session,
+  // ) {
+  //   const user = await this.sellerService.login(createSellerProfileDto);
 
-    if (user) {
-      session.email = createSellerProfileDto.sellerusername; // Set the email in the session
+  //   if (user) {
+  //     session.email = createSellerProfileDto.sellerusername; // Set the email in the session
 
-      return {
-        success: true,
-        message: 'Login successful',
-        user: user, // This includes the user details in the response
-      };
-    } else {
-      console.log('Unauthorized login attempt');
-      throw new HttpException('UnauthorizedException', HttpStatus.UNAUTHORIZED);
-    }
-  }
+  //     return {
+  //       success: true,
+  //       message: 'Login successful',
+  //       user: user, // This includes the user details in the response
+  //     };
+  //   } else {
+  //     console.log('Unauthorized login attempt');
+  //     throw new HttpException('UnauthorizedException', HttpStatus.UNAUTHORIZED);
+  //   }
+  // }
 }

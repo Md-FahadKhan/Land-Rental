@@ -11,6 +11,7 @@ import { Seller } from './module/sellerpersonal.entity';
 import { SellerPicture } from './module/sellerpicture.entity';
 import { SellerService } from './services/seller.service';
 import { SellerPictureService } from './services/sellerPicture.service';
+import { SellerE } from './module/sellerr.entity';
 
 // @Module({
 //   imports: [TypeOrmModule.forFeature([SellerProfile])],
@@ -28,6 +29,7 @@ import { SellerPictureService } from './services/sellerPicture.service';
       Product,
       Category,
       AddLand,
+      SellerE
     ]),
   ],
   providers: [SellerService, SellerPictureService],
